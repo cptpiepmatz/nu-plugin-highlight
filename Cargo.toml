@@ -1,0 +1,16 @@
+[package]
+name = "nu_plugin_highlight"
+version = "0.1.0"
+authors = ["Tim 'Piepmatz' Hesse"]
+edition = "2021"
+repository = "https://github.com/fdncred/nu_plugin_highlight"
+description = "a nushell plugin called highlight"
+license = "MIT"
+
+[dependencies]
+# nu
+nu-plugin = "0.80"
+nu-protocol = "0.80"
+
+# highlighting
+syntect = "5"
