@@ -1,0 +1,14 @@
+unstable_features = true
+edition = "2021"
+binop_separator = "Back"
+control_brace_style = "ClosingNextLine"
+format_strings = true
+hex_literal_case = "Upper"
+imports_granularity = "Module"
+overflow_delimited_expr = true
+reorder_impl_items = true
+reorder_imports = true
+group_imports = "StdExternalCrate"
+trailing_comma = "Never"
+use_field_init_shorthand = true
+wrap_comments = true

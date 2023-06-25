@@ -1,7 +1,6 @@
 use nu_plugin::{EvaluatedCall, LabeledError, Plugin};
-use nu_protocol::{Category, PluginExample, PluginSignature, Span, Spanned, SyntaxShape, Type, Value};
-use syntect::highlighting::ThemeSet;
-use bat::assets::HighlightingAssets;
+use nu_protocol::{Category, PluginSignature, Spanned, SyntaxShape, Value};
+
 use crate::highlight::Highlighter;
 
 pub struct HighlightPlugin;
@@ -21,17 +20,21 @@ impl Plugin for HighlightPlugin {
                 SyntaxShape::String,
                 "language or file extension to help language detection"
             )
-                 .named("theme", SyntaxShape::String, "theme used for highlighting", Some('t'))
-                 .switch("list-themes", "list all possible themes", None)
-            .category(Category::Strings)
-        ]
+            .named(
+                "theme",
+                SyntaxShape::String,
+                "theme used for highlighting",
+                Some('t')
+            )
+            .switch("list-themes", "list all possible themes", None)
+            .category(Category::Strings)]
     }
 
     fn run(
         &mut self,
         name: &str,
         call: &EvaluatedCall,
-        input: &Value,
+        input: &Value
     ) -> Result<Value, LabeledError> {
         assert_eq!(name, "highlight");
         let highlighter = Highlighter::new();
@@ -56,7 +59,7 @@ impl Plugin for HighlightPlugin {
                 return Err(LabeledError {
                     label: "Expected something from pipeline".into(),
                     msg: format!("requires some input, got {}", v.get_type()),
-                    span: Some(call.head),
+                    span: Some(call.head)
                 });
             }
         };

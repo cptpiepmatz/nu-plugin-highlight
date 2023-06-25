@@ -1,5 +1,4 @@
-use nu_plugin::{EvaluatedCall, LabeledError, MsgPackSerializer, Plugin, serve_plugin};
-use nu_protocol::{Category, PluginExample, PluginSignature, Spanned, SyntaxShape, Value};
+use nu_plugin::{serve_plugin, MsgPackSerializer};
 use plugin::HighlightPlugin;
 
 mod highlight;
