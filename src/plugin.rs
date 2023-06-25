@@ -1,25 +1,30 @@
 use nu_plugin::{EvaluatedCall, LabeledError, Plugin};
-use nu_protocol::{Category, PluginExample, PluginSignature, Spanned, SyntaxShape, Value};
+use nu_protocol::{Category, PluginExample, PluginSignature, Span, Spanned, SyntaxShape, Type, Value};
+use syntect::highlighting::ThemeSet;
+use bat::assets::HighlightingAssets;
+use crate::highlight::Highlighter;
 
-pub struct Highlight;
+pub struct HighlightPlugin;
 
-impl Highlight {
+impl HighlightPlugin {
     pub fn new() -> Self {
         Self {}
     }
 }
 
-impl Plugin for Highlight {
+impl Plugin for HighlightPlugin {
     fn signature(&self) -> Vec<PluginSignature> {
         vec![PluginSignature::build("highlight")
             .usage("View highlight results")
-            .required("path", SyntaxShape::String, "path to highlight input file")
-            .category(Category::Experimental)
-            .plugin_examples(vec![PluginExample {
-                description: "This is the example descripion".into(),
-                example: "some pipeline involving highlight".into(),
-                result: None,
-            }])]
+            .optional(
+                "language",
+                SyntaxShape::String,
+                "language or file extension to help language detection"
+            )
+                 .named("theme", SyntaxShape::String, "theme used for highlighting", Some('t'))
+                 .switch("list-themes", "list all possible themes", None)
+            .category(Category::Strings)
+        ]
     }
 
     fn run(
@@ -29,6 +34,18 @@ impl Plugin for Highlight {
         input: &Value,
     ) -> Result<Value, LabeledError> {
         assert_eq!(name, "highlight");
+        let highlighter = Highlighter::new();
+
+        // ignore everything else and return the list of themes
+        for (named, _) in call.named.iter() {
+            if named.item.as_str() == "list-themes" {
+                return Ok(highlighter.list_themes());
+            }
+        }
+
+        dbg!(call);
+        dbg!(input);
+
         let param: Option<Spanned<String>> = call.opt(0)?;
 
         let ret_val = match input {

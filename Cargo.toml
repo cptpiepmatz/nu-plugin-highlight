@@ -17,3 +17,5 @@ linguist-rs = "1.1"
 
 # highlighting
 syntect = "5"
+nu-ansi-term = "0.48"
+bat = "0.23"
