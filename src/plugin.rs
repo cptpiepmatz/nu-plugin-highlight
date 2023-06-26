@@ -42,7 +42,7 @@ impl Plugin for HighlightPlugin {
         // ignore everything else and return the list of themes
         for (named, _) in call.named.iter() {
             if named.item.as_str() == "list-themes" {
-                return Ok(highlighter.list_themes());
+                return Ok(highlighter.list_themes().into());
             }
         }
 
