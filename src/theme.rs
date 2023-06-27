@@ -44,6 +44,9 @@ impl From<ThemeDescription> for Value {
 
 impl From<ListThemes> for Value {
     fn from(value: ListThemes) -> Self {
-        Value::list(value.0.into_iter().map(Value::from).collect(), Span::unknown())
+        Value::list(
+            value.0.into_iter().map(Value::from).collect(),
+            Span::unknown()
+        )
     }
 }

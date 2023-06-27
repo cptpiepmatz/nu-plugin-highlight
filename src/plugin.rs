@@ -1,5 +1,5 @@
 use nu_plugin::{EvaluatedCall, LabeledError, Plugin};
-use nu_protocol::{Category, PluginSignature, Spanned, SyntaxShape, Value};
+use nu_protocol::{Category, PluginSignature, Span, Spanned, SyntaxShape, Value};
 
 use crate::highlight::Highlighter;
 
@@ -46,14 +46,12 @@ impl Plugin for HighlightPlugin {
             }
         }
 
-        dbg!(call);
-        dbg!(input);
-
         let param: Option<Spanned<String>> = call.opt(0)?;
+        let language = param.map(|Spanned {item, ..}| item);
 
         let ret_val = match input {
-            Value::String { val, span } => {
-                crate::highlight::highlight_do_something(param, val, *span)?
+            Value::String { val, .. } => {
+                Value::string(highlighter.highlight(val, &language, &None), Span::unknown())
             }
             v => {
                 return Err(LabeledError {

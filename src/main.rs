@@ -3,6 +3,7 @@ use plugin::HighlightPlugin;
 
 mod highlight;
 mod plugin;
+mod terminal;
 mod theme;
 
 fn main() {

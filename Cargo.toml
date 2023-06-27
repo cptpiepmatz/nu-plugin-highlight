@@ -12,10 +12,8 @@ license = "MIT"
 nu-plugin = "0.80"
 nu-protocol = "0.80"
 
-# language detection
-linguist-rs = "1.1"
-
 # highlighting
 syntect = "5"
 nu-ansi-term = "0.48"
+ansi_colours = "1"
 bat = "0.23"
