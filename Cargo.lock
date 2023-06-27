@@ -1186,7 +1186,7 @@ dependencies = [
 
 [[package]]
 name = "nu_plugin_highlight"
-version = "0.1.0"
+version = "0.1.0-wip"
 dependencies = [
  "ansi_colours",
  "bat",
