@@ -45,12 +45,14 @@ impl Highlighter {
         ha.themes().any(|t| t == theme_name)
     }
 
-    /// Highlights the given input text based on the provided language and theme.
+    /// Highlights the given input text based on the provided language and
+    /// theme.
     pub fn highlight(
         &self,
         input: &str,
         language: &Option<String>,
-        theme: &Option<String>
+        theme: &Option<String>,
+        true_colors: bool
     ) -> String {
         let syntax_set = self.highlighting_assets.get_syntax_set().unwrap();
         let syntax_ref: Option<&SyntaxReference> = match language {
@@ -77,7 +79,14 @@ impl Highlighter {
                 styled_lines
                     .iter()
                     .map(|(style, s)| {
-                        terminal::as_terminal_escaped(style.clone(), s, true, true, false, None)
+                        terminal::as_terminal_escaped(
+                            style.clone(),
+                            s,
+                            true_colors,
+                            true,
+                            false,
+                            None
+                        )
                     })
                     .collect::<String>() +
                     "\n"

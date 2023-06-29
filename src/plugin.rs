@@ -6,6 +6,7 @@ use nu_protocol::{Category, PluginSignature, Span, Spanned, SyntaxShape, Value};
 use crate::highlight::Highlighter;
 
 const THEME_ENV: &str = "NU_PLUGIN_HIGHLIGHT_THEME";
+const TRUE_COLORS_ENV: &str = "NU_PLUGIN_HIGHLIGHT_TRUE_COLORS";
 
 /// The struct that handles the plugin itself.
 pub struct HighlightPlugin;
@@ -50,32 +51,50 @@ impl Plugin for HighlightPlugin {
             return Ok(highlighter.list_themes().into());
         }
 
-        // use environment variable if available, override with passed theme
-        let mut theme = env::var(THEME_ENV).ok();
-        if let Some(theme_value) = call.get_flag_value("theme") {
-            match theme_value {
-                Value::String { val, span } => match highlighter.is_valid_theme(&val) {
-                    true => theme = Some(val),
-                    false => {
-                        return Err(LabeledError {
-                            label: "Unknown theme, use `highlight --list-themes` to list all \
-                                    themes"
-                                .into(),
-                            msg: "unknown theme".into(),
-                            span: Some(span)
-                        })
-                    }
-                },
-
-                _ => {
-                    return Err(LabeledError {
-                        label: "Expected theme value to be a string".into(),
-                        msg: format!("expected string, got {}", theme_value.get_type()),
-                        span: Some(theme_value.expect_span())
-                    })
-                }
+        // use theme from environment variable if available, override with passed
+        let theme = match (call.get_flag_value("theme"), env::var(THEME_ENV).ok()) {
+            (Some(Value::String { val, .. }), _) if highlighter.is_valid_theme(&val) => Some(val),
+            (Some(Value::String { span, .. }), _) => {
+                return Err(LabeledError {
+                    label: "Unknown theme, use `highlight --list-themes` to list all themes".into(),
+                    msg: "unknown theme".into(),
+                    span: Some(span)
+                })
             }
-        }
+            (Some(v), _) => {
+                return Err(LabeledError {
+                    label: "Expected theme value to be a string".into(),
+                    msg: format!("expected string, got {}", v.get_type()),
+                    span: Some(v.expect_span())
+                })
+            }
+            (_, Some(t)) if highlighter.is_valid_theme(&t) => Some(t),
+            (_, Some(t)) => {
+                return Err(LabeledError {
+                    label: format!("Unknown theme \"{}\"", t),
+                    msg: "use `highlight --list-themes` to list all themes".into(),
+                    span: None
+                })
+            }
+            _ => None
+        };
+
+        // check whether to use true colors from env variable, default to true
+        let true_colors = env::var(TRUE_COLORS_ENV)
+            .ok()
+            .map(|s| match s.trim().to_lowercase().as_str() {
+                "true" | "yes" | "1" | "" => Ok(true),
+                "false" | "no" | "0" => Ok(false),
+                s => Err(LabeledError {
+                    label: format!("Could not parse \"{}\" as boolean", s),
+                    msg: format!(
+                        "consider unsetting $env.{} or set it to \"true\" or \"false\"",
+                        TRUE_COLORS_ENV
+                    ),
+                    span: None
+                })
+            })
+            .unwrap_or(Ok(true))?;
 
         // extract language parameter, doesn't need any validation
         let param: Option<Spanned<String>> = call.opt(0)?;
@@ -83,9 +102,10 @@ impl Plugin for HighlightPlugin {
 
         // try to highlight if input is a string
         let ret_val = match input {
-            Value::String { val, .. } => {
-                Value::string(highlighter.highlight(val, &language, &theme), call.head)
-            }
+            Value::String { val, .. } => Value::string(
+                highlighter.highlight(val, &language, &theme, true_colors),
+                call.head
+            ),
             v => {
                 return Err(LabeledError {
                     label: "Expected source code as string from pipeline".into(),
