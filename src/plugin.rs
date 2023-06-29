@@ -1,7 +1,11 @@
+use std::env;
+
 use nu_plugin::{EvaluatedCall, LabeledError, Plugin};
 use nu_protocol::{Category, PluginSignature, Span, Spanned, SyntaxShape, Value};
 
 use crate::highlight::Highlighter;
+
+const THEME_ENV: &str = "NU_PLUGIN_HIGHLIGHT_THEME";
 
 pub struct HighlightPlugin;
 
@@ -40,23 +44,50 @@ impl Plugin for HighlightPlugin {
         let highlighter = Highlighter::new();
 
         // ignore everything else and return the list of themes
-        for (named, _) in call.named.iter() {
-            if named.item.as_str() == "list-themes" {
-                return Ok(highlighter.list_themes().into());
+        if call.has_flag("list-themes") {
+            return Ok(highlighter.list_themes().into());
+        }
+
+        // use environment variable if available, override with passed theme
+        let mut theme = env::var(THEME_ENV).ok();
+        if let Some(theme_value) = call.get_flag_value("theme") {
+            match theme_value {
+                Value::String { val, span } => match highlighter.is_valid_theme(&val) {
+                    true => theme = Some(val),
+                    false => {
+                        return Err(LabeledError {
+                            label: "Unknown theme, use `highlight --list-themes` to list all \
+                                    themes"
+                                .into(),
+                            msg: "unknown theme".into(),
+                            span: Some(span)
+                        })
+                    }
+                },
+
+                _ => {
+                    return Err(LabeledError {
+                        label: "Expected theme value to be a string".into(),
+                        msg: format!("expected string, got {}", theme_value.get_type()),
+                        span: Some(theme_value.expect_span())
+                    })
+                }
             }
         }
 
+        // extract language parameter, doesn't need any validation
         let param: Option<Spanned<String>> = call.opt(0)?;
-        let language = param.map(|Spanned {item, ..}| item);
+        let language = param.map(|Spanned { item, .. }| item);
 
+        // try to highlight if input is a string
         let ret_val = match input {
             Value::String { val, .. } => {
-                Value::string(highlighter.highlight(val, &language, &None), Span::unknown())
+                Value::string(highlighter.highlight(val, &language, &theme), call.head)
             }
             v => {
                 return Err(LabeledError {
-                    label: "Expected something from pipeline".into(),
-                    msg: format!("requires some input, got {}", v.get_type()),
+                    label: "Expected source code as string from pipeline".into(),
+                    msg: format!("expected string, got {}", v.get_type()),
                     span: Some(call.head)
                 });
             }
