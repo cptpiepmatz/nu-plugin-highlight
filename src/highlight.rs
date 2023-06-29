@@ -74,8 +74,11 @@ impl Highlighter {
                     .map(|(style, s)| {
                         terminal::as_terminal_escaped(style.clone(), s, true, true, false, None)
                     })
-                    .collect::<String>() + "\n"
+                    .collect::<String>() +
+                    "\n"
             })
-            .collect::<String>().trim().to_owned()
+            .collect::<String>()
+            .trim()
+            .to_owned()
     }
 }
