@@ -305,6 +305,7 @@ dependencies = [
  "iana-time-zone",
  "js-sys",
  "num-traits",
+ "pure-rust-locales",
  "serde",
  "time 0.1.45",
  "wasm-bindgen",
@@ -752,12 +753,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "heck"
-version = "0.4.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "95505c38b4572b2d910cecb0281560f54b440a19336cbbcb27bf6ce6adc6f5a8"
-
-[[package]]
 name = "hermit-abi"
 version = "0.1.19"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1041,30 +1036,28 @@ dependencies = [
 
 [[package]]
 name = "nu-engine"
-version = "0.80.0"
+version = "0.82.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5c5a63e1a390ceafa336ac4332724502a478b5dec2f67b24fd1d19fcd4d019b0"
+checksum = "f7eeb33c05baa1fbb49aa7f66e6284e60dfbf26e48de79c13deed95cbd67b673"
 dependencies = [
- "chrono",
  "nu-glob",
  "nu-path",
  "nu-protocol",
  "nu-utils",
- "serde",
  "sysinfo",
 ]
 
 [[package]]
 name = "nu-glob"
-version = "0.80.0"
+version = "0.82.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "922b20eb03387d5aa1d41bc9dbdd47799648c5417a0632328b3e367cb035b31f"
+checksum = "a73aed5e2a80f2021866adbd3a4b3013ace1ca06809459b3b208e791eb7729d9"
 
 [[package]]
 name = "nu-path"
-version = "0.80.0"
+version = "0.82.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "109b3cb16c1f1a134b19f63aa7d633af5f0ec61f25c5cb96e0f775c3794e9773"
+checksum = "0d2e531622a2abce947d8a7785c9ded4fdf7a5bf377d5cd8361976ccf1471fca"
 dependencies = [
  "dirs-next",
  "omnipath",
@@ -1073,14 +1066,13 @@ dependencies = [
 
 [[package]]
 name = "nu-plugin"
-version = "0.80.0"
+version = "0.82.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ac8b6f3fa7b8779d236f24c82e5560e9c3662e1d672f4a68676621132566ae5a"
+checksum = "1cf357fabf2e4b3843b676d8d69e66c2208fd6ed7c4c0d7af4afc47b0ebcd25f"
 dependencies = [
  "bincode",
  "nu-engine",
  "nu-protocol",
- "rmp",
  "rmp-serde",
  "serde",
  "serde_json",
@@ -1088,9 +1080,9 @@ dependencies = [
 
 [[package]]
 name = "nu-protocol"
-version = "0.80.0"
+version = "0.82.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cd7943cef88db9b614326b924125a7342e1a46e4eb9e82547becf917765f62d4"
+checksum = "b5bb9236979c37f13991e9ec5ef2740cb3cd6ce76641aff81dc25750c2e788dc"
 dependencies = [
  "byte-unit",
  "chrono",
@@ -1103,18 +1095,15 @@ dependencies = [
  "num-format",
  "serde",
  "serde_json",
- "strum",
- "strum_macros",
- "sys-locale",
  "thiserror",
  "typetag",
 ]
 
 [[package]]
 name = "nu-utils"
-version = "0.80.0"
+version = "0.82.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8da43579f039c9428df85f28fc58c4b1732ba2a7a9971c1b56dbe39b0a8e8ac3"
+checksum = "3fd14bf021311755c53fc6ea0beadd0c46d1d5be3c7dd23de3506d70d108bc0c"
 dependencies = [
  "crossterm_winapi",
  "log",
@@ -1126,7 +1115,7 @@ dependencies = [
 
 [[package]]
 name = "nu_plugin_highlight"
-version = "0.1.0-wip"
+version = "1.0.0"
 dependencies = [
  "ansi_colours",
  "bat",
@@ -1266,6 +1255,12 @@ checksum = "7b368fba921b0dce7e60f5e04ec15e565b3303972b42bcfde1d0713b881959eb"
 dependencies = [
  "unicode-ident",
 ]
+
+[[package]]
+name = "pure-rust-locales"
+version = "0.5.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b45c49fc4f91f35bae654f85ebb3a44d60ac64f11b3166ffa609def390c732d8"
 
 [[package]]
 name = "pwd"
@@ -1412,12 +1407,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "rustversion"
-version = "1.0.12"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4f3208ce4d8448b3f3e7d168a73f5e0c43a61e32930de3bceeccedb388b6bf06"
-
-[[package]]
 name = "ryu"
 version = "1.0.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1533,25 +1522,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "73473c0e59e6d5812c5dfe2a064a6444949f089e20eec9a2e5506596494e4623"
 
 [[package]]
-name = "strum"
-version = "0.24.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "063e6045c0e62079840579a7e47a355ae92f60eb74daaf156fb1e84ba164e63f"
-
-[[package]]
-name = "strum_macros"
-version = "0.24.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1e385be0d24f186b4ce2f9982191e7101bb737312ad61c1f2f984f34bcf85d59"
-dependencies = [
- "heck",
- "proc-macro2",
- "quote",
- "rustversion",
- "syn 1.0.109",
-]
-
-[[package]]
 name = "supports-color"
 version = "2.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1646,9 +1616,9 @@ dependencies = [
 
 [[package]]
 name = "sysinfo"
-version = "0.28.4"
+version = "0.29.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b4c2f3ca6693feb29a89724516f016488e9aafc7f37264f898593ee4b942f31b"
+checksum = "9557d0845b86eea8182f7b10dff120214fb6cd9fd937b6f4917714e546a38695"
 dependencies = [
  "cfg-if",
  "core-foundation-sys",
