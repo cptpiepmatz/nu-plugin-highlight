@@ -4,7 +4,7 @@ version = "0.1.0-wip"
 authors = ["Tim 'Piepmatz' Hesse"]
 edition = "2021"
 repository = "https://github.com/cptpiepmatz/nu-plugin-highlight"
-description = "a nushell plugin for highlight source code"
+description = "A nushell plugin for syntax highlighting"
 license = "MIT"
 
 [dependencies]
