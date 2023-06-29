@@ -36,6 +36,11 @@ impl Highlighter {
         )
     }
 
+    pub fn is_valid_theme(&self, theme_name: &str) -> bool {
+        let ha = &self.highlighting_assets;
+        ha.themes().any(|t| t == theme_name)
+    }
+
     pub fn highlight(
         &self,
         input: &str,
