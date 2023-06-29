@@ -1,7 +1,10 @@
-// pulled from: https://github.com/sharkdp/bat/blob/master/src/terminal.rs
+// pulled from:
+// https://github.com/sharkdp/bat/blob/8676bbf97f2832ad2231e102ca9c9b7b72267fda/src/terminal.rs
+#![cfg_attr(rustfmt, rustfmt_skip)]
 
 use nu_ansi_term::Color::{self, Fixed, Rgb};
 use nu_ansi_term::{self, Style};
+
 use syntect::highlighting::{self, FontStyle};
 
 pub fn to_ansi_color(color: highlighting::Color, true_color: bool) -> Option<nu_ansi_term::Color> {
@@ -31,21 +34,18 @@ pub fn to_ansi_color(color: highlighting::Color, true_color: bool) -> Option<nu_
             // TODO: When ansi_term adds support for bright variants using codes
             // 90-97 (foreground) and 100-107 (background), we should use those
             // for values 0x08 to 0x0f and only use Fixed for 0x10 to 0xff.
-            n => Fixed(n)
+            n => Fixed(n),
         })
-    }
-    else if color.a == 1 {
+    } else if color.a == 1 {
         // Themes can specify the terminal's default foreground/background color
         // (i.e. no escape sequence) using the encoding #RRGGBBAA with AA set to
         // 01. The built-in theme ansi uses this.
         None
-    }
-    else if true_color {
+    } else if true_color {
         Some(Rgb(color.r, color.g, color.b))
-    }
-    else {
+    } else {
         Some(Fixed(ansi_colours::ansi256_from_rgb((
-            color.r, color.g, color.b
+            color.r, color.g, color.b,
         ))))
     }
 }
@@ -56,7 +56,7 @@ pub fn as_terminal_escaped(
     true_color: bool,
     colored: bool,
     italics: bool,
-    background_color: Option<highlighting::Color>
+    background_color: Option<highlighting::Color>,
 ) -> String {
     if text.is_empty() {
         return text.to_string();
@@ -64,10 +64,11 @@ pub fn as_terminal_escaped(
 
     let mut style = if !colored {
         Style::default()
-    }
-    else {
-        let mut color = Style::default();
-        color.foreground = to_ansi_color(style.foreground, true_color);
+    } else {
+        let mut color = Style {
+            foreground: to_ansi_color(style.foreground, true_color),
+            ..Style::default()
+        };
         if style.font_style.contains(FontStyle::BOLD) {
             color = color.bold();
         }
