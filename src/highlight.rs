@@ -77,8 +77,8 @@ impl Highlighter {
             .map(|(i, l)| {
                 // insert a newline in between lines, this is necessary for bats syntax set
                 let l = match i == line_count - 1 {
-                    false => format!("{}\n", l.trim()),
-                    true => l.trim().to_owned()
+                    false => format!("{}\n", l.trim_end()),
+                    true => l.trim_end().to_owned()
                 };
 
                 let styled_lines = highlighter.highlight_line(&l, syntax_set).unwrap();
