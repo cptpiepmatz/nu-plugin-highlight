@@ -70,10 +70,18 @@ impl Highlighter {
         let theme = self.highlighting_assets.get_theme(theme);
 
         let mut highlighter = HighlightLines::new(syntax_ref, theme);
+        let line_count = input.lines().count();
         input
             .lines()
-            .map(|l| {
-                let styled_lines = highlighter.highlight_line(l, syntax_set).unwrap();
+            .enumerate()
+            .map(|(i, l)| {
+                // insert a newline in between lines, this is necessary for bats syntax set
+                let l = match i == line_count - 1 {
+                    false => format!("{}\n", l.trim()),
+                    true => l.trim().to_owned()
+                };
+
+                let styled_lines = highlighter.highlight_line(&l, syntax_set).unwrap();
                 styled_lines
                     .iter()
                     .map(|(style, s)| {
@@ -86,11 +94,8 @@ impl Highlighter {
                             None
                         )
                     })
-                    .collect::<String>() +
-                    "\n"
+                    .collect::<String>()
             })
             .collect::<String>()
-            .trim()
-            .to_owned()
     }
 }
