@@ -89,14 +89,19 @@ Follow these steps:
 
 1. Install the plugin from crates.io using cargo:
     ```nushell
-    cargo install nu-plugin-highlight
+    cargo install nu_plugin_highlight
     ```
 
 2. Restart your terminal session to ensure the newly installed plugin is recognized.
 
-3. Register the plugin with Nushell:
+3. Find path of your installation:
     ```nushell
-    register (which nu_plugin_highlight).path
+    which nu_plugin_highlight
+    ```
+
+4. Register the plugin with Nushell:
+    ```nushell
+    register path/to/the/plugin/binary
     ```
 
 After registering, the plugin is available as part of your set of commands:
