@@ -35,7 +35,11 @@ impl Plugin for HighlightPlugin {
             )
             .switch("list-themes", "list all possible themes", None)
             .category(Category::Strings)
-            .search_terms((vec!["syntax".into(), "highlight".into(), "highlighting".into()]))
+            .search_terms(vec![
+                "syntax".into(),
+                "highlight".into(),
+                "highlighting".into(),
+            ])
             .input_output_types(vec![
                 (Type::String, Type::String),
                 (
