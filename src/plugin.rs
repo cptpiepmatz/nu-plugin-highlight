@@ -7,9 +7,11 @@ use crate::highlight::Highlighter;
 
 const THEME_ENV: &str = "NU_PLUGIN_HIGHLIGHT_THEME";
 
+/// The struct that handles the plugin itself.
 pub struct HighlightPlugin;
 
 impl HighlightPlugin {
+    /// Creates a new instance of the HighlightPlugin.
     pub fn new() -> Self {
         Self {}
     }

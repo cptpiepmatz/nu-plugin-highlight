@@ -7,17 +7,20 @@ use syntect::parsing::SyntaxReference;
 use crate::terminal;
 use crate::theme::{ListThemes, ThemeDescription};
 
+/// The struct that handles the highlighting of code.
 pub struct Highlighter {
     highlighting_assets: HighlightingAssets
 }
 
 impl Highlighter {
+    /// Creates a new instance of the Highlighter.
     pub fn new() -> Self {
         Highlighter {
             highlighting_assets: HighlightingAssets::from_binary()
         }
     }
 
+    /// Lists all the available themes.
     pub fn list_themes(&self) -> ListThemes {
         let ha = &self.highlighting_assets;
         let default_theme_id = HighlightingAssets::default_theme();
@@ -36,11 +39,13 @@ impl Highlighter {
         )
     }
 
+    /// Checks if a given theme id is valid.
     pub fn is_valid_theme(&self, theme_name: &str) -> bool {
         let ha = &self.highlighting_assets;
         ha.themes().any(|t| t == theme_name)
     }
 
+    /// Highlights the given input text based on the provided language and theme.
     pub fn highlight(
         &self,
         input: &str,

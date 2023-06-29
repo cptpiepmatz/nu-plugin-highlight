@@ -1,6 +1,7 @@
 use nu_protocol::{Span, Value};
 use syntect::highlighting::Theme;
 
+/// Description of a theme.
 pub struct ThemeDescription {
     pub id: String,
     pub name: Option<String>,
@@ -8,6 +9,7 @@ pub struct ThemeDescription {
     pub default: bool
 }
 
+/// List of theme descriptions.
 pub struct ListThemes(pub Vec<ThemeDescription>);
 
 impl From<ThemeDescription> for Value {
