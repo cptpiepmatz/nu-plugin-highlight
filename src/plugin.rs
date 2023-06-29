@@ -1,7 +1,7 @@
 use std::env;
 
 use nu_plugin::{EvaluatedCall, LabeledError, Plugin};
-use nu_protocol::{Category, PluginSignature, Span, Spanned, SyntaxShape, Value};
+use nu_protocol::{Category, PluginSignature, Spanned, SyntaxShape, Value};
 
 use crate::highlight::Highlighter;
 

@@ -1,6 +1,4 @@
 use bat::assets::HighlightingAssets;
-use nu_plugin::LabeledError;
-use nu_protocol::{Span, Spanned, Value};
 use syntect::easy::HighlightLines;
 use syntect::parsing::SyntaxReference;
 

@@ -1,5 +1,4 @@
 use nu_protocol::{Span, Value};
-use syntect::highlighting::Theme;
 
 /// Description of a theme.
 pub struct ThemeDescription {
