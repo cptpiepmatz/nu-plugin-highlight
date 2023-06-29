@@ -1,5 +1,6 @@
 // pulled from:
 // https://github.com/sharkdp/bat/blob/8676bbf97f2832ad2231e102ca9c9b7b72267fda/src/terminal.rs
+// applied patch to 64-67 to fix default update construction
 #![cfg_attr(rustfmt, rustfmt_skip)]
 
 use nu_ansi_term::Color::{self, Fixed, Rgb};
@@ -65,10 +66,8 @@ pub fn as_terminal_escaped(
     let mut style = if !colored {
         Style::default()
     } else {
-        let mut color = Style {
-            foreground: to_ansi_color(style.foreground, true_color),
-            ..Style::default()
-        };
+        let mut color = Style::default();
+        color.foreground = to_ansi_color(style.foreground, true_color);
         if style.font_style.contains(FontStyle::BOLD) {
             color = color.bold();
         }
