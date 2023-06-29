@@ -1,7 +1,7 @@
 use std::env;
 
 use nu_plugin::{EvaluatedCall, LabeledError, Plugin};
-use nu_protocol::{Category, PluginSignature, Spanned, SyntaxShape, Value};
+use nu_protocol::{Category, PluginExample, PluginSignature, Spanned, SyntaxShape, Type, Value};
 
 use crate::highlight::Highlighter;
 
@@ -21,7 +21,7 @@ impl HighlightPlugin {
 impl Plugin for HighlightPlugin {
     fn signature(&self) -> Vec<PluginSignature> {
         vec![PluginSignature::build("highlight")
-            .usage("View highlight results")
+            .usage("Syntax highlight source code.")
             .optional(
                 "language",
                 SyntaxShape::String,
@@ -34,7 +34,28 @@ impl Plugin for HighlightPlugin {
                 Some('t')
             )
             .switch("list-themes", "list all possible themes", None)
-            .category(Category::Strings)]
+            .category(Category::Strings)
+            .search_terms((vec!["syntax".into(), "highlight".into(), "highlighting".into()]))
+            .input_output_types(vec![
+                (Type::String, Type::String),
+                (Type::Any, Type::Table(vec![
+                    (String::from("id"), Type::String),
+                    (String::from("name"), Type::String),
+                    (String::from("author"), Type::String),
+                    (String::from("default"), Type::Bool)
+                ]))
+            ])
+            .plugin_examples((vec![
+                ("Highlight a toml file by its file extension", "open Cargo.toml -r | highlight toml"),
+                ("Highlight a rust file by programming language", "open src/main.rs | highlight Rust"),
+                ("Highlight a bash script by inferring the language (needs shebang)", "open example.sh | highlight"),
+                ("Highlight a toml file with another theme", "open Cargo.toml -r | highlight toml -t ansi"),
+                ("List all available themes", "highlight --list-themes")
+            ]).into_iter().map(|(description, example)| PluginExample {
+                example: example.to_owned(),
+                description: description.to_owned(),
+                result: None
+            }).collect())]
     }
 
     fn run(
