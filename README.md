@@ -66,6 +66,9 @@ The plugin can be configured using environment variables:
 ### NU_PLUGIN_HIGHLIGHT_TRUE_COLORS
 Enable or disable true colors (24-bit). 
 By default, this is enabled.
+```nushell
+let-env NU_PLUGIN_HIGHLIGHT_TRUE_COLORS = true
+```
 
 ### NU_PLUGIN_HIGHLIGHT_THEME
 Set a theme to use.
@@ -75,6 +78,9 @@ Setting this environment variable should allow
 `highlight --list-themes | where id == $env.NU_PLUGIN_HIGHLIGHT_THEME` to result 
 in a single row with your selected theme. 
 If you get no results, you have set an invalid theme.
+```nushell
+let-env NU_PLUGIN_HIGHLIGHT_THEME = ansi
+```
 
 ## Plugin Installation
 Installing and registering the `nu-plugin-highlight` is a straightforward 
@@ -99,6 +105,6 @@ After registering, the plugin is available as part of your set of commands:
 help commands | where command_type == "plugin"
 ```
 
-## LICENSE
+## License
 `nu_plugin_highlight` is licensed under the MIT License. 
 See [LICENSE](LICENSE) for more information.
