@@ -54,10 +54,30 @@ impl Highlighter {
     ) -> String {
         let syntax_set = self.highlighting_assets.get_syntax_set().unwrap();
         let syntax_ref: Option<&SyntaxReference> = match language {
-            None => None,
-            Some(language) => syntax_set
-                .find_syntax_by_name(language)
-                .or(syntax_set.find_syntax_by_extension(language))
+            Some(language) if language.len() > 0 => {
+                // allow multiple variants to write the language
+                let language_lowercase = language.to_lowercase();
+                let language_capitalized = {
+                    let mut chars = language.chars();
+                    let mut out = String::with_capacity(language.len());
+                    chars
+                        .next()
+                        .expect("language not empty")
+                        .to_uppercase()
+                        .for_each(|c| out.push(c));
+                    chars.for_each(|c| out.push(c));
+                    out
+                };
+
+                syntax_set
+                    .find_syntax_by_name(language)
+                    .or_else(|| syntax_set.find_syntax_by_name(&language_lowercase))
+                    .or_else(|| syntax_set.find_syntax_by_name(&language_capitalized))
+                    .or_else(|| syntax_set.find_syntax_by_extension(language))
+                    .or_else(|| syntax_set.find_syntax_by_extension(&language_lowercase))
+                    .or_else(|| syntax_set.find_syntax_by_extension(&language_capitalized))
+            }
+            _ => None
         };
         let syntax_ref = syntax_ref
             .or(syntax_set.find_syntax_by_first_line(input))
