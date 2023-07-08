@@ -40,7 +40,6 @@ impl Plugin for HighlightPlugin {
                 "highlight".into(),
                 "highlighting".into(),
             ])
-            .input_type(Type::String)
             .input_output_types(vec![
                 (Type::String, Type::String),
                 (
