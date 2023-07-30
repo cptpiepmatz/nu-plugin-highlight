@@ -61,6 +61,14 @@ highlight --list-themes
   List all possible themes.
 
 ## Configuration
+> ⚠️ Note: starting with Nushell **v0.83**, `let-env` is deprecated (https://www.nushell.sh/blog/2023-07-25-nushell_0_83.html#breaking-changes)
+>
+> Please use `$env.` instead:
+> ```nushell
+> $env.NU_PLUGIN_HIGHLIGHT_TRUE_COLORS = true
+> $env.NU_PLUGIN_HIGHLIGHT_THEME = ansi
+> ```
+
 The plugin can be configured using environment variables:
 
 ### NU_PLUGIN_HIGHLIGHT_TRUE_COLORS
