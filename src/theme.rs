@@ -36,7 +36,7 @@ impl From<ThemeDescription> for Value {
                     Some(author) => Value::string(author, Span::unknown()),
                     None => Value::nothing(Span::unknown())
                 },
-                Value::boolean(default, Span::unknown()),
+                Value::bool(default, Span::unknown()),
             ],
             Span::unknown()
         )
