@@ -10,9 +10,8 @@ keywords = ["nu", "plugin", "syntax", "highlighting"]
 categories = ["command-line-utilities", "development-tools", "value-formatting"]
 
 [dependencies]
-# nu
-nu-plugin = "0.83"
-nu-protocol = "0.83"
+nu-plugin = { version = "0.84.1", path = "../nushell/crates/nu-plugin" }
+nu-protocol = { version = "0.84.1", path = "../nushell/crates/nu-protocol" }
 
 # highlighting
 syntect = "5"

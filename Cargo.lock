@@ -60,12 +60,6 @@ dependencies = [
 
 [[package]]
 name = "arrayvec"
-version = "0.5.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "23b62fc65de8e4e7f52534fb52b0f3ed04746ae267519eef2a83941e8085068b"
-
-[[package]]
-name = "arrayvec"
 version = "0.7.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "96d30a06541fbafbc7f82ed10c06164cfbd2c401138f6addd8404629c4b16711"
@@ -773,9 +767,7 @@ dependencies = [
 
 [[package]]
 name = "nu-engine"
-version = "0.83.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e649f36136c4c61131ea2b0e051df1e27e040e2859150b9efa2d1e79d4b66651"
+version = "0.84.1"
 dependencies = [
  "nu-glob",
  "nu-path",
@@ -786,15 +778,11 @@ dependencies = [
 
 [[package]]
 name = "nu-glob"
-version = "0.83.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6c5c8c24d7bab232b594d4052536bc21c689ce7bdf38e1fd499fcfbf537007c0"
+version = "0.84.1"
 
 [[package]]
 name = "nu-path"
-version = "0.83.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "040af52fc60c443c6e6f45ac3bcd1a47faf8e7ca33bb852609f8581a5020749f"
+version = "0.84.1"
 dependencies = [
  "dirs-next",
  "omnipath",
@@ -803,9 +791,7 @@ dependencies = [
 
 [[package]]
 name = "nu-plugin"
-version = "0.83.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2e483640dafc2d0866a4f54b142806dc62d17cea604a9af59a8f2ff95c018e44"
+version = "0.84.1"
 dependencies = [
  "bincode",
  "nu-engine",
@@ -817,9 +803,7 @@ dependencies = [
 
 [[package]]
 name = "nu-protocol"
-version = "0.83.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2e5ff85113e603b4f17ca68657ddb37f9be1fd250011e2c50d03e26081e2d48c"
+version = "0.84.1"
 dependencies = [
  "byte-unit",
  "chrono",
@@ -838,9 +822,7 @@ dependencies = [
 
 [[package]]
 name = "nu-utils"
-version = "0.83.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b7cb7efdaad0b3530a72b2d9e8b4d3f2c24a6217e5f313fdd589d77f5fe02a91"
+version = "0.84.1"
 dependencies = [
  "crossterm_winapi",
  "log",
@@ -868,7 +850,7 @@ version = "0.4.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a652d9771a63711fd3c3deb670acfbe5c30a4072e664d7a3bf5a9e1056ac72c3"
 dependencies = [
- "arrayvec 0.7.4",
+ "arrayvec",
  "itoa",
 ]
 
@@ -1226,9 +1208,9 @@ checksum = "8207e78455ffdf55661170876f88daf85356e4edd54e0a3dbc79586ca1e50cbe"
 
 [[package]]
 name = "strip-ansi-escapes"
-version = "0.1.1"
+version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "011cbb39cf7c1f62871aea3cc46e5817b0937b49e9447370c93cacbe93a766d8"
+checksum = "55ff8ef943b384c414f54aefa961dd2bd853add74ec75e7ac74cf91dba62bcfa"
 dependencies = [
  "vte",
 ]
@@ -1450,11 +1432,10 @@ checksum = "49874b5167b65d7193b8aba1567f5c7d93d001cafc34600cee003eda787e483f"
 
 [[package]]
 name = "vte"
-version = "0.10.1"
+version = "0.11.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6cbce692ab4ca2f1f3047fcf732430249c0e971bfdd2b234cf2c47ad93af5983"
+checksum = "f5022b5fbf9407086c180e9557be968742d839e68346af7792b8592489732197"
 dependencies = [
- "arrayvec 0.5.2",
  "utf8parse",
  "vte_generate_state_changes",
 ]

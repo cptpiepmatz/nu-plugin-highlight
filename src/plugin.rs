@@ -25,13 +25,13 @@ impl Plugin for HighlightPlugin {
             .optional(
                 "language",
                 SyntaxShape::String,
-                "language or file extension to help language detection"
+                "language or file extension to help language detection",
             )
             .named(
                 "theme",
                 SyntaxShape::String,
                 "theme used for highlighting",
-                Some('t')
+                Some('t'),
             )
             .switch("list-themes", "list all possible themes", None)
             .category(Category::Strings)
@@ -49,26 +49,26 @@ impl Plugin for HighlightPlugin {
                         (String::from("name"), Type::String),
                         (String::from("author"), Type::String),
                         (String::from("default"), Type::Bool),
-                    ])
+                    ]),
                 ),
             ])
             .plugin_examples(
                 (vec![
                     (
                         "Highlight a toml file by its file extension",
-                        "open Cargo.toml -r | highlight toml"
+                        "open Cargo.toml -r | highlight toml",
                     ),
                     (
                         "Highlight a rust file by programming language",
-                        "open src/main.rs | highlight Rust"
+                        "open src/main.rs | highlight Rust",
                     ),
                     (
                         "Highlight a bash script by inferring the language (needs shebang)",
-                        "open example.sh | highlight"
+                        "open example.sh | highlight",
                     ),
                     (
                         "Highlight a toml file with another theme",
-                        "open Cargo.toml -r | highlight toml -t ansi"
+                        "open Cargo.toml -r | highlight toml -t ansi",
                     ),
                     ("List all available themes", "highlight --list-themes"),
                 ])
@@ -76,9 +76,9 @@ impl Plugin for HighlightPlugin {
                 .map(|(description, example)| PluginExample {
                     example: example.to_owned(),
                     description: description.to_owned(),
-                    result: None
+                    result: None,
                 })
-                .collect()
+                .collect(),
             )]
     }
 
@@ -86,7 +86,7 @@ impl Plugin for HighlightPlugin {
         &mut self,
         name: &str,
         call: &EvaluatedCall,
-        input: &Value
+        input: &Value,
     ) -> Result<Value, LabeledError> {
         assert_eq!(name, "highlight");
         let highlighter = Highlighter::new();
@@ -103,14 +103,14 @@ impl Plugin for HighlightPlugin {
                 return Err(LabeledError {
                     label: "Unknown theme, use `highlight --list-themes` to list all themes".into(),
                     msg: "unknown theme".into(),
-                    span: Some(span)
+                    span: Some(span),
                 })
             }
             (Some(v), _) => {
                 return Err(LabeledError {
                     label: "Expected theme value to be a string".into(),
                     msg: format!("expected string, got {}", v.get_type()),
-                    span: Some(v.expect_span())
+                    span: Some(v.span()),
                 })
             }
             (_, Some(t)) if highlighter.is_valid_theme(&t) => Some(t),
@@ -118,10 +118,10 @@ impl Plugin for HighlightPlugin {
                 return Err(LabeledError {
                     label: format!("Unknown theme \"{}\"", t),
                     msg: "use `highlight --list-themes` to list all themes".into(),
-                    span: None
+                    span: None,
                 })
             }
-            _ => None
+            _ => None,
         };
 
         // check whether to use true colors from env variable, default to true
@@ -136,8 +136,8 @@ impl Plugin for HighlightPlugin {
                         "consider unsetting $env.{} or set it to \"true\" or \"false\"",
                         TRUE_COLORS_ENV
                     ),
-                    span: None
-                })
+                    span: None,
+                }),
             })
             .unwrap_or(Ok(true))?;
 
@@ -149,13 +149,13 @@ impl Plugin for HighlightPlugin {
         let ret_val = match input {
             Value::String { val, .. } => Value::string(
                 highlighter.highlight(val, &language, &theme, true_colors),
-                call.head
+                call.head,
             ),
             v => {
                 return Err(LabeledError {
                     label: "Expected source code as string from pipeline".into(),
                     msg: format!("expected string, got {}", v.get_type()),
-                    span: Some(call.head)
+                    span: Some(call.head),
                 });
             }
         };
