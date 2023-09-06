@@ -1,9 +1,7 @@
-use std::env;
-
+use crate::highlight::Highlighter;
 use nu_plugin::{EvaluatedCall, LabeledError, Plugin};
 use nu_protocol::{Category, PluginExample, PluginSignature, Spanned, SyntaxShape, Type, Value};
-
-use crate::highlight::Highlighter;
+use std::env;
 
 const THEME_ENV: &str = "NU_PLUGIN_HIGHLIGHT_THEME";
 const TRUE_COLORS_ENV: &str = "NU_PLUGIN_HIGHLIGHT_TRUE_COLORS";
@@ -95,15 +93,19 @@ impl Plugin for HighlightPlugin {
         if call.has_flag("list-themes") {
             return Ok(highlighter.list_themes().into());
         }
-
+        let theme_name = call.get_flag_value("theme");
+        let theme_span = match &theme_name {
+            Some(t) => t.span(),
+            None => call.head,
+        };
         // use theme from environment variable if available, override with passed
-        let theme = match (call.get_flag_value("theme"), env::var(THEME_ENV).ok()) {
+        let theme = match (theme_name, env::var(THEME_ENV).ok()) {
             (Some(Value::String { val, .. }), _) if highlighter.is_valid_theme(&val) => Some(val),
-            (Some(Value::String { span, .. }), _) => {
+            (Some(Value::String { .. }), _) => {
                 return Err(LabeledError {
                     label: "Unknown theme, use `highlight --list-themes` to list all themes".into(),
                     msg: "unknown theme".into(),
-                    span: Some(span),
+                    span: Some(theme_span),
                 })
             }
             (Some(v), _) => {
