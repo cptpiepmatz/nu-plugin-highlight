@@ -66,8 +66,10 @@ pub fn as_terminal_escaped(
     let mut style = if !colored {
         Style::default()
     } else {
-        let mut color = Style::default();
-        color.foreground = to_ansi_color(style.foreground, true_color);
+        let mut color = Style {
+            foreground: to_ansi_color(style.foreground, true_color),
+            ..Default::default()
+        };
         if style.font_style.contains(FontStyle::BOLD) {
             color = color.bold();
         }
