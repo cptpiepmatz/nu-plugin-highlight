@@ -1,4 +1,4 @@
-use nu_protocol::{Span, Value};
+use nu_protocol::{record, Span, Value};
 
 /// Description of a theme.
 pub struct ThemeDescription {
@@ -20,24 +20,19 @@ impl From<ThemeDescription> for Value {
             default
         } = value;
         Value::record(
-            vec![
-                String::from("id"),
-                String::from("name"),
-                String::from("author"),
-                String::from("default"),
-            ],
-            vec![
-                Value::string(id, Span::unknown()),
-                match name {
+            record! {
+                "id" => Value::string(id, Span::unknown()),
+                "name" => match name {
                     Some(name) => Value::string(name, Span::unknown()),
-                    None => Value::nothing(Span::unknown())
+                    None => Value::nothing(Span::unknown()),
+
                 },
-                match author {
+                "author" => match author {
                     Some(author) => Value::string(author, Span::unknown()),
-                    None => Value::nothing(Span::unknown())
+                    None => Value::nothing(Span::unknown()),
                 },
-                Value::bool(default, Span::unknown()),
-            ],
+                "default" => Value::bool(default, Span::unknown()),
+            },
             Span::unknown()
         )
     }
