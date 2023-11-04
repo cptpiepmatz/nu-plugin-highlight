@@ -54,7 +54,7 @@ impl Highlighter {
     ) -> String {
         let syntax_set = self.highlighting_assets.get_syntax_set().unwrap();
         let syntax_ref: Option<&SyntaxReference> = match language {
-            Some(language) if language.len() > 0 => {
+            Some(language) if !language.is_empty() => {
                 // allow multiple variants to write the language
                 let language_lowercase = language.to_lowercase();
                 let language_capitalized = {
@@ -106,7 +106,7 @@ impl Highlighter {
                     .iter()
                     .map(|(style, s)| {
                         terminal::as_terminal_escaped(
-                            style.clone(),
+                            *style,
                             s,
                             true_colors,
                             true,

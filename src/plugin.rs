@@ -95,7 +95,6 @@ impl Plugin for HighlightPlugin {
         if call.has_flag("list-themes") {
             return Ok(highlighter.list_themes().into());
         }
-
         let theme = call.get_flag_value("theme");
         let theme_span = theme.clone().map(|v| v.span()).unwrap_or(call.head);
 
