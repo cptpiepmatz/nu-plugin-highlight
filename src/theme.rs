@@ -5,7 +5,7 @@ pub struct ThemeDescription {
     pub id: String,
     pub name: Option<String>,
     pub author: Option<String>,
-    pub default: bool,
+    pub default: bool
 }
 
 /// List of theme descriptions.
@@ -17,7 +17,7 @@ impl From<ThemeDescription> for Value {
             id,
             name,
             author,
-            default,
+            default
         } = value;
         Value::record(
             record! {
@@ -32,7 +32,7 @@ impl From<ThemeDescription> for Value {
                 },
                 "default" => Value::test_bool(default),
             },
-            Span::unknown(),
+            Span::unknown()
         )
     }
 }
@@ -41,7 +41,7 @@ impl From<ListThemes> for Value {
     fn from(value: ListThemes) -> Self {
         Value::list(
             value.0.into_iter().map(Value::from).collect(),
-            Span::unknown(),
+            Span::unknown()
         )
     }
 }

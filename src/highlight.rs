@@ -105,14 +105,7 @@ impl Highlighter {
                 styled_lines
                     .iter()
                     .map(|(style, s)| {
-                        terminal::as_terminal_escaped(
-                            *style,
-                            s,
-                            true_colors,
-                            true,
-                            false,
-                            None
-                        )
+                        terminal::as_terminal_escaped(*style, s, true_colors, true, false, None)
                     })
                     .collect::<String>()
             })
