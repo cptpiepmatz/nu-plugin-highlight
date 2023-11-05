@@ -95,13 +95,11 @@ impl Plugin for HighlightPlugin {
         if call.has_flag("list-themes") {
             return Ok(highlighter.list_themes().into());
         }
-        let theme_name = call.get_flag_value("theme");
-        let theme_span = match &theme_name {
-            Some(t) => t.span(),
-            None => call.head
-        };
+        let theme = call.get_flag_value("theme");
+        let theme_span = theme.clone().map(|v| v.span()).unwrap_or(call.head);
+
         // use theme from environment variable if available, override with passed
-        let theme = match (theme_name, env::var(THEME_ENV).ok()) {
+        let theme = match (theme, env::var(THEME_ENV).ok()) {
             (Some(Value::String { val, .. }), _) if highlighter.is_valid_theme(&val) => Some(val),
             (Some(Value::String { .. }), _) => {
                 return Err(LabeledError {
@@ -114,7 +112,7 @@ impl Plugin for HighlightPlugin {
                 return Err(LabeledError {
                     label: "Expected theme value to be a string".into(),
                     msg: format!("expected string, got {}", v.get_type()),
-                    span: Some(v.span())
+                    span: Some(theme_span)
                 })
             }
             (_, Some(t)) if highlighter.is_valid_theme(&t) => Some(t),

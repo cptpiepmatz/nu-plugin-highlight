@@ -21,17 +21,16 @@ impl From<ThemeDescription> for Value {
         } = value;
         Value::record(
             record! {
-                "id" => Value::string(id, Span::unknown()),
+                "id" => Value::test_string(id),
                 "name" => match name {
-                    Some(name) => Value::string(name, Span::unknown()),
-                    None => Value::nothing(Span::unknown()),
-
+                    Some(name) => Value::test_string(name),
+                    None => Value::test_nothing(),
                 },
                 "author" => match author {
-                    Some(author) => Value::string(author, Span::unknown()),
-                    None => Value::nothing(Span::unknown()),
+                    Some(author) => Value::test_string(author),
+                    None => Value::test_nothing(),
                 },
-                "default" => Value::bool(default, Span::unknown()),
+                "default" => Value::test_bool(default),
             },
             Span::unknown()
         )
