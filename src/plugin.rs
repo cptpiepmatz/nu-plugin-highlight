@@ -1,4 +1,5 @@
 use std::env;
+use std::env::VarError;
 
 use nu_plugin::{EvaluatedCall, LabeledError, Plugin};
 use nu_protocol::{Category, PluginExample, PluginSignature, Spanned, SyntaxShape, Type, Value};
@@ -85,6 +86,7 @@ impl Plugin for HighlightPlugin {
     fn run(
         &mut self,
         name: &str,
+        config: &Option<Value>,
         call: &EvaluatedCall,
         input: &Value
     ) -> Result<Value, LabeledError> {
@@ -92,56 +94,28 @@ impl Plugin for HighlightPlugin {
         let highlighter = Highlighter::new();
 
         // ignore everything else and return the list of themes
-        if call.has_flag("list-themes") {
+        if call.has_flag("list-themes")? {
             return Ok(highlighter.list_themes().into());
         }
-        let theme = call.get_flag_value("theme");
-        let theme_span = theme.clone().map(|v| v.span()).unwrap_or(call.head);
 
-        // use theme from environment variable if available, override with passed
-        let theme = match (theme, env::var(THEME_ENV).ok()) {
-            (Some(Value::String { val, .. }), _) if highlighter.is_valid_theme(&val) => Some(val),
-            (Some(Value::String { .. }), _) => {
-                return Err(LabeledError {
-                    label: "Unknown theme, use `highlight --list-themes` to list all themes".into(),
-                    msg: "unknown theme".into(),
-                    span: Some(theme_span)
-                })
-            }
-            (Some(v), _) => {
-                return Err(LabeledError {
-                    label: "Expected theme value to be a string".into(),
-                    msg: format!("expected string, got {}", v.get_type()),
-                    span: Some(theme_span)
-                })
-            }
-            (_, Some(t)) if highlighter.is_valid_theme(&t) => Some(t),
-            (_, Some(t)) => {
-                return Err(LabeledError {
-                    label: format!("Unknown theme \"{}\"", t),
-                    msg: "use `highlight --list-themes` to list all themes".into(),
-                    span: None
-                })
-            }
-            _ => None
-        };
+        let theme = extract_theme(
+            |t| highlighter.is_valid_theme(t),
+            call.get_flag_value("theme"),
+            config
+                .as_ref()
+                .map(|v| v.get_data_by_key("theme"))
+                .flatten()
+                .clone()
+        )?;
 
-        // check whether to use true colors from env variable, default to true
-        let true_colors = env::var(TRUE_COLORS_ENV)
-            .ok()
-            .map(|s| match s.trim().to_lowercase().as_str() {
-                "true" | "yes" | "1" | "" => Ok(true),
-                "false" | "no" | "0" => Ok(false),
-                s => Err(LabeledError {
-                    label: format!("Could not parse \"{}\" as boolean", s),
-                    msg: format!(
-                        "consider unsetting $env.{} or set it to \"true\" or \"false\"",
-                        TRUE_COLORS_ENV
-                    ),
-                    span: None
-                })
-            })
-            .unwrap_or(Ok(true))?;
+        let true_colors = extract_true_colors(
+            config
+                .as_ref()
+                .map(|v| v.get_data_by_key("true_colors"))
+                .flatten()
+                .clone()
+        )?
+        .unwrap_or(true);
 
         // extract language parameter, doesn't need any validation
         let param: Option<Spanned<String>> = call.opt(0)?;
@@ -164,4 +138,124 @@ impl Plugin for HighlightPlugin {
 
         Ok(ret_val)
     }
+}
+
+/// Extract theme.
+///
+/// Try to pull the theme out of these in that order:
+/// - passed flag value
+/// - passed config value
+/// - env variable [`THEME_ENV`]
+fn extract_theme(
+    is_valid_theme: impl Fn(&str) -> bool,
+    flag_value: Option<Value>,
+    config_value: Option<Value>
+) -> Result<Option<String>, LabeledError> {
+    use Value::String as VS;
+    let ok = |v| Ok(Some(v));
+
+    match flag_value {
+        Some(VS { val, .. }) if is_valid_theme(&val) => return ok(val),
+        Some(VS { val, internal_span }) => {
+            return Err(LabeledError {
+                label: format!("Unknown passed theme {val:?}"),
+                msg: "use `highlight --list-themes` to list all themes".into(),
+                span: Some(internal_span)
+            })
+        }
+        Some(v) => {
+            return Err(LabeledError {
+                label: "Passed theme is not a string".into(),
+                msg: format!("expected string, got {}", v.get_type()),
+                span: Some(v.span())
+            })
+        }
+        None => ()
+    }
+
+    match config_value {
+        Some(VS { val, .. }) if is_valid_theme(&val) => return ok(val),
+        Some(VS { val, .. }) => {
+            return Err(LabeledError {
+                label: format!("Unknown config theme {val:?}"),
+                msg: "use `highlight --list-themes` to list all themes".into(),
+                span: None
+            })
+        }
+        Some(v) => {
+            return Err(LabeledError {
+                label: "Configured theme is not a string".into(),
+                msg: format!("expected string, got {}", v.get_type()),
+                span: Some(v.span())
+            })
+        }
+        None => ()
+    }
+
+    match env::var(THEME_ENV) {
+        Ok(val) if is_valid_theme(&val) => return ok(val),
+        Ok(val) => {
+            return Err(LabeledError {
+                label: format!("Unknown env theme {val:?}"),
+                msg: "use `highlight --list-themes` to list all themes".into(),
+                span: None
+            })
+        }
+        Err(VarError::NotUnicode(_)) => {
+            return Err(LabeledError {
+                label: format!("{THEME_ENV} is not unicode"),
+                msg: "make sure only unicode characters are used".into(),
+                span: None
+            })
+        }
+        Err(VarError::NotPresent) => ()
+    }
+
+    Ok(None)
+}
+
+/// Extract true colors setting.
+///
+/// Try to extract true colors setting either from config or from env variable
+/// [`TRUE_COLORS_ENV`]
+fn extract_true_colors(config_value: Option<Value>) -> Result<Option<bool>, LabeledError> {
+    use Value::Bool as VB;
+    let ok = |v| Ok(Some(v));
+
+    match config_value {
+        Some(VB { val, .. }) => return ok(val),
+        Some(v) => {
+            return Err(LabeledError {
+                label: "True colors configuration is not a boolean".into(),
+                msg: format!("expected bool, got {}", v.get_type()),
+                span: None
+            })
+        }
+        None => ()
+    }
+
+    match env::var(TRUE_COLORS_ENV).as_ref().map(|v| v.as_str()) {
+        Ok("true" | "yes" | "1" | "") => return ok(true),
+        Ok("false" | "no" | "0") => return ok(false),
+        Ok(s) => {
+            return Err(LabeledError {
+                label: format!("Could not parse {s:?} as boolean"),
+                msg: format!(
+                    "consider unsetting $env.{TRUE_COLORS_ENV} or set it to {:?} or {:?}",
+                    true, false
+                ),
+                span: None
+            })
+        }
+        Err(VarError::NotUnicode(_)) => {
+            return Err(LabeledError {
+                label: format!("{TRUE_COLORS_ENV} is not unicode"),
+                msg: "make sure only unicode characters are used".into(),
+                span: None
+            })
+        }
+        Err(VarError::NotPresent) => ()
+    }
+
+    Ok(None)
 }
