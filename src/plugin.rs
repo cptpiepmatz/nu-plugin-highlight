@@ -103,16 +103,14 @@ impl Plugin for HighlightPlugin {
             call.get_flag_value("theme"),
             config
                 .as_ref()
-                .map(|v| v.get_data_by_key("theme"))
-                .flatten()
+                .and_then(|v| v.get_data_by_key("theme"))
                 .clone()
         )?;
 
         let true_colors = extract_true_colors(
             config
                 .as_ref()
-                .map(|v| v.get_data_by_key("true_colors"))
-                .flatten()
+                .and_then(|v| v.get_data_by_key("true_colors"))
                 .clone()
         )?
         .unwrap_or(true);
