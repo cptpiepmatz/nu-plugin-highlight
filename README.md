@@ -61,27 +61,34 @@ highlight --list-themes
   List all possible themes.
 
 ## Configuration
-⚠️ Note: starting with Nushell **v0.83**, `let-env` is deprecated in favor of `$env.`, as informed in https://www.nushell.sh/blog/2023-07-25-nushell_0_83.html#breaking-changes
+The plugin can be configured using the 
+[`$env.config.plugin.highlight`](https://github.com/nushell/nushell/pull/10955) 
+variable.
 
-The plugin can be configured using environment variables:
+> [!IMPORTANT]
+> The environment variables `NU_PLUGIN_HIGHLIGHT_TRUE_COLORS` and
+> `NU_PLUGIN_HIGHLIGHT_THEME` are currently still supported but considered
+> deprecated.
+>
+> Start using `$env.config.plugin.highlight`.
 
-### NU_PLUGIN_HIGHLIGHT_TRUE_COLORS
-Enable or disable true colors (24-bit). 
+### `true_colors`
+Enable or disable true colors (24-bit).
 By default, this is enabled.
 ```nushell
-$env.NU_PLUGIN_HIGHLIGHT_TRUE_COLORS = true
+$env.config.plugin.highlight.true_colors = true
 ```
 
-### NU_PLUGIN_HIGHLIGHT_THEME
+### `theme`
 Set a theme to use.
-The default theme depends on the operating system. 
-Use `highlight --list-themes | where default == true` to see your default theme. 
-Setting this environment variable should allow 
-`highlight --list-themes | where id == $env.NU_PLUGIN_HIGHLIGHT_THEME` to result 
-in a single row with your selected theme. 
+The default theme depends on the operating system.
+Use `highlight --list-themes | where default == true` to see your default theme.
+Setting this environment variable should allow
+`highlight --list-themes | where id == $env.config.plugin.highlight.theme` to 
+result in a single row with your selected theme.
 If you get no results, you have set an invalid theme.
 ```nushell
-$env.NU_PLUGIN_HIGHLIGHT_THEME = ansi
+$env.config.plugin.highlight.theme = ansi
 ```
 
 ## Plugin Installation
@@ -111,6 +118,13 @@ After registering, the plugin is available as part of your set of commands:
 ```nushell
 help commands | where command_type == "plugin"
 ```
+
+## Version Numbering
+Starting with version `v1.1.0`, the version number of `nu-plugin-highlight` 
+incorporates the version number of its dependency, `nu-plugin`. 
+This is denoted in the format `v1.1.0+0.90.1`, where `v1.1.0` refers to the 
+version of `nu-plugin-highlight` and `0.90.1` refers to the version of the 
+`nu-plugin` dependency.
 
 ## License
 `nu_plugin_highlight` is licensed under the MIT License. 
