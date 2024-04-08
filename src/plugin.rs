@@ -1,8 +1,12 @@
 use std::env;
 use std::env::VarError;
+use std::time::SystemTime;
 
-use nu_plugin::{EvaluatedCall, LabeledError, Plugin};
-use nu_protocol::{Category, PluginExample, PluginSignature, Spanned, SyntaxShape, Type, Value};
+use nu_plugin::{EngineInterface, EvaluatedCall, Plugin, PluginCommand, SimplePluginCommand};
+use nu_protocol::{
+    Category, ErrorLabel, Example, LabeledError, PluginExample, PluginSignature, Signature, Span,
+    Spanned, SyntaxShape, Type, Value
+};
 
 use crate::highlight::Highlighter;
 
@@ -12,17 +16,23 @@ const TRUE_COLORS_ENV: &str = "NU_PLUGIN_HIGHLIGHT_TRUE_COLORS";
 /// The struct that handles the plugin itself.
 pub struct HighlightPlugin;
 
-impl HighlightPlugin {
-    /// Creates a new instance of the HighlightPlugin.
-    pub fn new() -> Self {
-        Self {}
+impl Plugin for HighlightPlugin {
+    fn commands(&self) -> Vec<Box<dyn PluginCommand<Plugin = Self>>> {
+        vec![Box::new(Highlight)]
     }
 }
 
-impl Plugin for HighlightPlugin {
-    fn signature(&self) -> Vec<PluginSignature> {
-        vec![PluginSignature::build("highlight")
-            .usage("Syntax highlight source code.")
+struct Highlight;
+
+impl SimplePluginCommand for Highlight {
+    type Plugin = HighlightPlugin;
+
+    fn name(&self) -> &str {
+        "highlight"
+    }
+
+    fn signature(&self) -> Signature {
+        Signature::build(PluginCommand::name(self))
             .optional(
                 "language",
                 SyntaxShape::String,
@@ -31,72 +41,41 @@ impl Plugin for HighlightPlugin {
             .named(
                 "theme",
                 SyntaxShape::String,
-                "theme used for highlighting",
+                "them used for highlighting",
                 Some('t')
             )
             .switch("list-themes", "list all possible themes", None)
             .category(Category::Strings)
-            .search_terms(vec![
-                "syntax".into(),
-                "highlight".into(),
-                "highlighting".into(),
-            ])
-            .input_output_types(vec![
-                (Type::String, Type::String),
-                (
-                    Type::Any,
-                    Type::Table(vec![
-                        (String::from("id"), Type::String),
-                        (String::from("name"), Type::String),
-                        (String::from("author"), Type::String),
-                        (String::from("default"), Type::Bool),
-                    ])
-                ),
-            ])
-            .plugin_examples(
-                (vec![
-                    (
-                        "Highlight a toml file by its file extension",
-                        "open Cargo.toml -r | highlight toml"
-                    ),
-                    (
-                        "Highlight a rust file by programming language",
-                        "open src/main.rs | highlight Rust"
-                    ),
-                    (
-                        "Highlight a bash script by inferring the language (needs shebang)",
-                        "open example.sh | highlight"
-                    ),
-                    (
-                        "Highlight a toml file with another theme",
-                        "open Cargo.toml -r | highlight toml -t ansi"
-                    ),
-                    ("List all available themes", "highlight --list-themes"),
+            .input_output_type(Type::String, Type::String)
+            .input_output_type(
+                Type::Any,
+                Type::Table(vec![
+                    (String::from("id"), Type::String),
+                    (String::from("name"), Type::String),
+                    (String::from("author"), Type::String),
+                    (String::from("default"), Type::Bool),
                 ])
-                .into_iter()
-                .map(|(description, example)| PluginExample {
-                    example: example.to_owned(),
-                    description: description.to_owned(),
-                    result: None
-                })
-                .collect()
-            )]
+            )
+    }
+
+    fn usage(&self) -> &str {
+        "Syntax highlight source code."
     }
 
     fn run(
-        &mut self,
-        name: &str,
-        config: &Option<Value>,
+        &self,
+        plugin: &Self::Plugin,
+        engine: &EngineInterface,
         call: &EvaluatedCall,
         input: &Value
     ) -> Result<Value, LabeledError> {
-        assert_eq!(name, "highlight");
         let highlighter = Highlighter::new();
 
-        // ignore everything else and return the list of themes
         if call.has_flag("list-themes")? {
             return Ok(highlighter.list_themes().into());
         }
+
+        let config = engine.get_plugin_config()?;
 
         let theme = extract_theme(
             |t| highlighter.is_valid_theme(t),
@@ -127,14 +106,72 @@ impl Plugin for HighlightPlugin {
             ),
             v => {
                 return Err(LabeledError {
-                    label: "Expected source code as string from pipeline".into(),
                     msg: format!("expected string, got {}", v.get_type()),
-                    span: Some(call.head)
+                    labels: vec![ErrorLabel {
+                        text: "Expected source code as string from pipeline".to_owned(),
+                        span: call.head
+                    }],
+                    code: None,
+                    url: None,
+                    help: None,
+                    inner: vec![]
                 });
             }
         };
 
         Ok(ret_val)
+    }
+
+    fn search_terms(&self) -> Vec<&str> {
+        vec!["syntax", "highlight", "highlighting"]
+    }
+
+    fn examples(&self) -> Vec<Example> {
+        const fn example<'e>(description: &'e str, example: &'e str) -> Example<'e>
+        where
+            'e: 'static
+        {
+            Example {
+                example,
+                description,
+                result: None
+            }
+        }
+
+        vec![
+            example(
+                "Highlight a toml file by its file extension",
+                "open Cargo.toml -r | highlight toml"
+            ),
+            example(
+                "Highlight a rust file by programming language",
+                "open src/main.rs | highlight Rust"
+            ),
+            example(
+                "Highlight a bash script by inferring the language (needs shebang)",
+                "open example.sh | highlight"
+            ),
+            example(
+                "Highlight a toml file with another theme",
+                "open Cargo.toml -r | highlight toml -t ansi"
+            ),
+            example("List all available themes", "highlight --list-themes"),
+        ]
+    }
+}
+
+/// Simple constructor for [`LabeledError`].
+fn labeled_error(msg: String, label: String, span: Option<Span>) -> LabeledError {
+    LabeledError {
+        msg,
+        labels: vec![ErrorLabel {
+            text: label,
+            span: span.unwrap_or(Span::unknown())
+        }],
+        code: None,
+        url: None,
+        help: None,
+        inner: vec![]
     }
 }
 
@@ -150,23 +187,24 @@ fn extract_theme(
     config_value: Option<Value>
 ) -> Result<Option<String>, LabeledError> {
     use Value::String as VS;
+
     let ok = |v| Ok(Some(v));
 
     match flag_value {
         Some(VS { val, .. }) if is_valid_theme(&val) => return ok(val),
         Some(VS { val, internal_span }) => {
-            return Err(LabeledError {
-                label: format!("Unknown passed theme {val:?}"),
-                msg: "use `highlight --list-themes` to list all themes".into(),
-                span: Some(internal_span)
-            })
+            return Err(labeled_error(
+                "use `highlight --list-themes` to list all themes".into(),
+                format!("Unknown passed theme {val:?}"),
+                Some(internal_span)
+            ))
         }
         Some(v) => {
-            return Err(LabeledError {
-                label: "Passed theme is not a string".into(),
-                msg: format!("expected string, got {}", v.get_type()),
-                span: Some(v.span())
-            })
+            return Err(labeled_error(
+                format!("expected string, got {}", v.get_type()),
+                "Passed theme is not a string".into(),
+                Some(v.span())
+            ))
         }
         None => ()
     }
@@ -174,18 +212,18 @@ fn extract_theme(
     match config_value {
         Some(VS { val, .. }) if is_valid_theme(&val) => return ok(val),
         Some(VS { val, .. }) => {
-            return Err(LabeledError {
-                label: format!("Unknown config theme {val:?}"),
-                msg: "use `highlight --list-themes` to list all themes".into(),
-                span: None
-            })
+            return Err(labeled_error(
+                "use `highlight --list-themes` to list all themes".into(),
+                format!("Unknown config theme {val:?}"),
+                None
+            ))
         }
         Some(v) => {
-            return Err(LabeledError {
-                label: "Configured theme is not a string".into(),
-                msg: format!("expected string, got {}", v.get_type()),
-                span: Some(v.span())
-            })
+            return Err(labeled_error(
+                format!("expected string, got {}", v.get_type()),
+                "Configured theme is not a string".into(),
+                Some(v.span())
+            ))
         }
         None => ()
     }
@@ -193,18 +231,18 @@ fn extract_theme(
     match env::var(THEME_ENV) {
         Ok(val) if is_valid_theme(&val) => return ok(val),
         Ok(val) => {
-            return Err(LabeledError {
-                label: format!("Unknown env theme {val:?}"),
-                msg: "use `highlight --list-themes` to list all themes".into(),
-                span: None
-            })
+            return Err(labeled_error(
+                "use `highlight --list-themes` to list all themes".into(),
+                format!("Unknown env theme {val:?}"),
+                None
+            ))
         }
         Err(VarError::NotUnicode(_)) => {
-            return Err(LabeledError {
-                label: format!("{THEME_ENV} is not unicode"),
-                msg: "make sure only unicode characters are used".into(),
-                span: None
-            })
+            return Err(labeled_error(
+                "make sure only unicode characters are used".into(),
+                format!("{THEME_ENV} is not unicode"),
+                None
+            ))
         }
         Err(VarError::NotPresent) => ()
     }
@@ -223,11 +261,11 @@ fn extract_true_colors(config_value: Option<Value>) -> Result<Option<bool>, Labe
     match config_value {
         Some(VB { val, .. }) => return ok(val),
         Some(v) => {
-            return Err(LabeledError {
-                label: "True colors configuration is not a boolean".into(),
-                msg: format!("expected bool, got {}", v.get_type()),
-                span: None
-            })
+            return Err(labeled_error(
+                format!("expected bool, got {}", v.get_type()),
+                "True colors configuration is not a boolean".into(),
+                None
+            ))
         }
         None => ()
     }
@@ -236,21 +274,21 @@ fn extract_true_colors(config_value: Option<Value>) -> Result<Option<bool>, Labe
         Ok("true" | "yes" | "1" | "") => return ok(true),
         Ok("false" | "no" | "0") => return ok(false),
         Ok(s) => {
-            return Err(LabeledError {
-                label: format!("Could not parse {s:?} as boolean"),
-                msg: format!(
+            return Err(labeled_error(
+                format!(
                     "consider unsetting $env.{TRUE_COLORS_ENV} or set it to {:?} or {:?}",
                     true, false
                 ),
-                span: None
-            })
+                format!("Could not parse {s:?} as boolean"),
+                None
+            ))
         }
         Err(VarError::NotUnicode(_)) => {
-            return Err(LabeledError {
-                label: format!("{TRUE_COLORS_ENV} is not unicode"),
-                msg: "make sure only unicode characters are used".into(),
-                span: None
-            })
+            return Err(labeled_error(
+                "make sure only unicode characters are used".into(),
+                format!("{TRUE_COLORS_ENV} is not unicode"),
+                None
+            ))
         }
         Err(VarError::NotPresent) => ()
     }
