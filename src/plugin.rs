@@ -1,11 +1,9 @@
 use std::env;
 use std::env::VarError;
-use std::time::SystemTime;
 
 use nu_plugin::{EngineInterface, EvaluatedCall, Plugin, PluginCommand, SimplePluginCommand};
 use nu_protocol::{
-    Category, ErrorLabel, Example, LabeledError, PluginExample, PluginSignature, Signature, Span,
-    Spanned, SyntaxShape, Type, Value
+    Category, ErrorLabel, Example, LabeledError, Signature, Span, Spanned, SyntaxShape, Type, Value
 };
 
 use crate::highlight::Highlighter;
@@ -64,7 +62,7 @@ impl SimplePluginCommand for Highlight {
 
     fn run(
         &self,
-        plugin: &Self::Plugin,
+        _plugin: &Self::Plugin,
         engine: &EngineInterface,
         call: &EvaluatedCall,
         input: &Value
