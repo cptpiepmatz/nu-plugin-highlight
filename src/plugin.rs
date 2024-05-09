@@ -47,12 +47,15 @@ impl SimplePluginCommand for Highlight {
             .input_output_type(Type::String, Type::String)
             .input_output_type(
                 Type::Any,
-                Type::Table(vec![
-                    (String::from("id"), Type::String),
-                    (String::from("name"), Type::String),
-                    (String::from("author"), Type::String),
-                    (String::from("default"), Type::Bool),
-                ])
+                Type::Table(
+                    vec![
+                        (String::from("id"), Type::String),
+                        (String::from("name"), Type::String),
+                        (String::from("author"), Type::String),
+                        (String::from("default"), Type::Bool),
+                    ]
+                    .into()
+                )
             )
     }
 
