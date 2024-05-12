@@ -115,7 +115,9 @@ Follow these steps:
     plugin add path/to/the/plugin/binary
     ```
 
-5. Load plugin into scope:
+5. Make the plugin available for use:
+
+   Tip: You can simply restart the shell or terminal. When nushell starts, it loads all plugins.
 
    If you are using a version **lower** than **0.93.0**, you do **not need** to do this.
    ```nushell
