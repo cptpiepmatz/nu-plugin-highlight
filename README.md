@@ -109,9 +109,20 @@ Follow these steps:
     ```
 
 4. Register the plugin with Nushell:
+   
+    If you are using a version **lower** than **0.93.0**, use `register` instead of `plugin add`.
     ```nushell
-    register path/to/the/plugin/binary
+    plugin add path/to/the/plugin/binary
     ```
+
+5. Make the plugin available for use:
+
+   Tip: You can simply restart the shell or terminal. When nushell starts, it loads all plugins.
+
+   If you are using a version **lower** than **0.93.0**, you do **not need** to do this.
+   ```nushell
+   plugin use highlight
+   ```
 
 After registering, the plugin is available as part of your set of commands:
 
