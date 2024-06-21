@@ -80,14 +80,14 @@ impl SimplePluginCommand for Highlight {
         let config = engine.get_plugin_config()?;
 
         if call.has_flag("build-cache")? {
-            let src_path = get_path("src_path", config.as_ref())?;
-            let cache_path = get_path("cache_path", config.as_ref())?;
+            let src_path = get_path_from_key("src_path", config.as_ref())?;
+            let cache_path = get_path_from_key("cache_path", config.as_ref())?;
 
             return Highlighter::build_cache(src_path, cache_path)
                 .map(|ok_msg| Value::string(ok_msg, Span::new(0, 0)));
         }
 
-        let cache_path = get_path("cache_path", config.as_ref())?;
+        let cache_path = get_path_from_key("cache_path", config.as_ref())?;
 
         println!("{cache_path:?}");
 
@@ -180,7 +180,7 @@ impl SimplePluginCommand for Highlight {
     }
 }
 
-fn get_path(arg: &str, config: Option<&Value>) -> Result<String, LabeledError> {
+fn get_path_from_key(arg: &str, config: Option<&Value>) -> Result<String, LabeledError> {
     let arg_from_config = config
         .ok_or_else(|| LabeledError::new("config not found in $env"))?
         .get_data_by_key(arg);
