@@ -87,9 +87,11 @@ impl SimplePluginCommand for Highlight {
                 .map(|ok_msg| Value::string(ok_msg, Span::new(0, 0)));
         }
 
-        let cache_path = get_path_from_key("cache_path", config.as_ref())?;
-
-        println!("{cache_path:?}");
+        // can't use ? here, if bat is not in system and someone doesn't have custom themes
+        // they won't have a cache_path defined -> should use default themes from bat
+        // if we use ? it will just error, not use defaults, so we map it to an option and use that
+        // in the Highlighter::new() function
+        let cache_path = get_path_from_key("cache_path", config.as_ref()).ok();
 
         let highlighter = Highlighter::new(cache_path);
 

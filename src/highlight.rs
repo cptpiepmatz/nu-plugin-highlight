@@ -22,15 +22,16 @@ pub struct Highlighter {
 
 impl Highlighter {
     /// Creates a new instance of the Highlighter.
-    pub fn new(cache_path: String) -> Self {
-        let cache_path = PathBuf::from(cache_path);
-        let highlighting_assets =
-            if let Ok(highlighting_assets) = HighlightingAssets::from_cache(&cache_path) {
-                highlighting_assets
+    pub fn new(cache_path: Option<String>) -> Self {
+        let mut highlighting_assets = HighlightingAssets::from_binary();
+        
+        if let Some(cache_path) = cache_path {
+            let cache_path = PathBuf::from(cache_path);
+
+            if let Ok(highlighting_assets_local) = HighlightingAssets::from_cache(&cache_path) {
+                highlighting_assets = highlighting_assets_local
             }
-            else {
-                HighlightingAssets::from_binary()
-            };
+        }
 
         Highlighter {
             highlighting_assets
