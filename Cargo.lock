@@ -123,12 +123,14 @@ dependencies = [
  "once_cell",
  "path_abs",
  "plist",
+ "regex",
  "semver",
  "serde",
  "serde_yaml",
  "syntect",
  "thiserror",
  "unicode-width",
+ "walkdir",
 ]
 
 [[package]]
@@ -416,15 +418,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b7bda66e858c683005a53a9a60c69a4aca7eeaa45d124526e389f7aec8e62f38"
 dependencies = [
  "memchr",
-]
-
-[[package]]
-name = "convert_case"
-version = "0.6.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ec182b0ca2f35d8fc196cf3404988fd8b8c739a4d270ff118a398feb0cbec1ca"
-dependencies = [
- "unicode-segmentation",
 ]
 
 [[package]]
@@ -938,19 +931,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "nu-derive-value"
-version = "0.94.1"
-dependencies = [
- "convert_case",
- "proc-macro-error",
- "proc-macro2",
- "quote",
- "syn 2.0.66",
-]
-
-[[package]]
 name = "nu-engine"
-version = "0.94.1"
+version = "0.94.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c30d540e769f468448fe4f2ffe9833b3dd600ab196e02a8cbf9098e39804d4df"
 dependencies = [
  "nu-glob",
  "nu-path",
@@ -960,11 +944,15 @@ dependencies = [
 
 [[package]]
 name = "nu-glob"
-version = "0.94.1"
+version = "0.94.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "72d3681b6b6751322271e4c0d5764cc4f53fbd129e119aa74a3142ca8a725ed7"
 
 [[package]]
 name = "nu-path"
-version = "0.94.1"
+version = "0.94.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cca82b7ebc3ffcc23c280d0a422e95789259ff918e02d996cb9301c26cb5b368"
 dependencies = [
  "dirs-next",
  "omnipath",
@@ -973,7 +961,9 @@ dependencies = [
 
 [[package]]
 name = "nu-plugin"
-version = "0.94.1"
+version = "0.94.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bcba21feeff55e733c463b6f30872f65bce6f3e5b4e5f63a738490c010ca69ec"
 dependencies = [
  "log",
  "nix",
@@ -986,7 +976,9 @@ dependencies = [
 
 [[package]]
 name = "nu-plugin-core"
-version = "0.94.1"
+version = "0.94.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b7537c2b5c85ac74199dfc7cbb7a54b4d2dbee5a8bda663eaea451012bf2266a"
 dependencies = [
  "interprocess",
  "log",
@@ -1000,7 +992,9 @@ dependencies = [
 
 [[package]]
 name = "nu-plugin-protocol"
-version = "0.94.1"
+version = "0.94.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d710b0b9f8fa36f7d6b342fdd4d8613cc9af04b9252e3cb7ed37c95660902d39"
 dependencies = [
  "bincode",
  "nu-protocol",
@@ -1012,7 +1006,9 @@ dependencies = [
 
 [[package]]
 name = "nu-protocol"
-version = "0.94.1"
+version = "0.94.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e4e47fc3ee009e469c23fd0d7c2cce49474f4fcf5a330240b9bce5a7d4103ee5"
 dependencies = [
  "brotli",
  "byte-unit",
@@ -1023,7 +1019,6 @@ dependencies = [
  "lru",
  "miette",
  "nix",
- "nu-derive-value",
  "nu-path",
  "nu-system",
  "nu-utils",
@@ -1037,7 +1032,9 @@ dependencies = [
 
 [[package]]
 name = "nu-system"
-version = "0.94.1"
+version = "0.94.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "97619456b3cde26ef4b346df475ffedaa79c9a04ffed32f9f9e9cb152b3be38b"
 dependencies = [
  "chrono",
  "itertools",
@@ -1055,7 +1052,9 @@ dependencies = [
 
 [[package]]
 name = "nu-utils"
-version = "0.94.1"
+version = "0.94.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a4a88fdc4783c773dbe7342d632e827cedb268957d040fb69a5432d87d4ba7b5"
 dependencies = [
  "crossterm_winapi",
  "log",
@@ -1220,7 +1219,6 @@ dependencies = [
  "proc-macro-error-attr",
  "proc-macro2",
  "quote",
- "syn 1.0.109",
  "version_check",
 ]
 
@@ -1895,12 +1893,6 @@ name = "unicode-linebreak"
 version = "0.1.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3b09c83c3c29d37506a3e260c08c03743a6bb66a9cd432c6934ab501a190571f"
-
-[[package]]
-name = "unicode-segmentation"
-version = "1.11.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d4c87d22b6e3f4a18d4d40ef354e97c90fcb14dd91d7dc0aa9d8a1172ebf7202"
 
 [[package]]
 name = "unicode-width"

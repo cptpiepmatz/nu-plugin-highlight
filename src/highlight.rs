@@ -1,9 +1,19 @@
+use std::path::PathBuf;
+use std::process::Command;
+use std::str::from_utf8;
+
 use bat::assets::HighlightingAssets;
+use nu_protocol::LabeledError;
 use syntect::easy::HighlightLines;
 use syntect::parsing::SyntaxReference;
 
 use crate::terminal;
 use crate::theme::{ListThemes, ThemeDescription};
+
+// We try to use the system bat version by calling bat -V later, but if this
+// doesn't exist, this is just a a default value (highlight doesn't error if
+// there is a particular version used in metadata.yaml)
+const DEFAULT_BAT_VERSION: &str = "0.24.0";
 
 /// The struct that handles the highlighting of code.
 pub struct Highlighter {
@@ -12,11 +22,106 @@ pub struct Highlighter {
 
 impl Highlighter {
     /// Creates a new instance of the Highlighter.
-    pub fn new() -> Self {
+    pub fn new(cache_path: String) -> Self {
+        let cache_path = PathBuf::from(cache_path);
+        let highlighting_assets =
+            HighlightingAssets::from_cache(&cache_path).expect("Failed to load assets");
+
         Highlighter {
-            highlighting_assets: HighlightingAssets::from_binary()
+            highlighting_assets
         }
     }
+
+    pub fn build_cache(src_path: String, cache_path: String) -> Result<&'static str, LabeledError> {
+        let src = PathBuf::from(src_path);
+        let cache = PathBuf::from(cache_path);
+
+        // if bat exists in the system use it (to avoid conflicts for config version)
+        let current_version = if let Ok(s) = Command::new("bat").arg("-V").output() {
+            let data = s.stdout;
+            if let Ok(s) = from_utf8(&data) {
+                s.to_owned()
+                    .chars()
+                    .filter(|&c| (c == '.' || c.is_ascii_digit()))
+                    .collect::<String>()
+            }
+            else {
+                DEFAULT_BAT_VERSION.to_owned()
+            }
+        }
+        else {
+            DEFAULT_BAT_VERSION.to_owned()
+        };
+
+        println!();
+        bat::assets::build(&src, true, true, &cache, &current_version)
+            .map(|_| "\nCache created succesfully!")
+            .map_err(|e| LabeledError::new(format!("bat cache build failed. {e:?}")))
+    }
+
+    // fn src_cache_from_bat() -> Result<(String, String), LabeledError> {
+    //     let src_path = from_utf8(
+    //         &Command::new("bat")
+    //             .arg("--config-dir")
+    //             .output()
+    //             .map_err(|e| LabeledError::new(format!("Failed to run bat:
+    // {e}")))?             .stdout
+    //     )
+    //     .map_err(|e| LabeledError::new(format!("Parsing bat --config-dir failed:
+    // {e:?}")))?     .trim_end()
+    //     .to_owned();
+
+    //     let cache_path = from_utf8(
+    //         &Command::new("bat")
+    //             .arg("--cache-dir")
+    //             .output()
+    //             .map_err(|e| LabeledError::new(format!("Failed to run bat:
+    // {e}")))?             .stdout
+    //     )
+    //     .map_err(|e| LabeledError::new(format!("Parsing bat --cache-dir failed:
+    // {e:?}")))?     .trim_end()
+    //     .to_owned();
+
+    //     Ok((src_path, cache_path))
+    // }
+
+    // fn src_cache_from_options(
+    //     src_path: Option<Value>,
+    //     cache_path: Option<Value>
+    // ) -> Result<(String, String), LabeledError> {
+    //     let src_path = if let Some(src_path) = src_path {
+    //         match src_path {
+    //             Value::String {
+    //                 val: src_path,
+    //                 internal_span: _
+    //             } => Ok(src_path),
+    //             _ => return Err(LabeledError::new("src_path field is not a
+    // string"))         }
+    //     }
+    //     else {
+    //         Err(LabeledError::new("src_path field is not defined"))
+    //     }?;
+    //     let cache_path = if let Some(cache_path) = cache_path {
+    //         match cache_path {
+    //             Value::String {
+    //                 val: cache_path,
+    //                 internal_span: _
+    //             } => Ok(cache_path),
+    //             _ => return Err(LabeledError::new("cache_path field is not a
+    // string"))         }
+    //     }
+    //     else {
+    //         Err(LabeledError::new("cache_path is not defined"))
+    //     }?;
+
+    //     Ok((src_path, cache_path))
+    // }
+
+    // create the cache (BAT_VERSION must match to avoid conflict, so try to pick it
+    // up from bat -V command)
+    // fn create_cache(src: &str, target_dir: &str) -> Result<(), LabeledError> {
+
+    // }
 
     /// Lists all the available themes.
     pub fn list_themes(&self) -> ListThemes {

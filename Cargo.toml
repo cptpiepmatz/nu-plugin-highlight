@@ -11,11 +11,13 @@ categories = ["command-line-utilities", "development-tools", "value-formatting"]
 
 [dependencies]
 # nu
-nu-plugin = { version = "0.94", path = "../nushell/crates/nu-plugin" }
-nu-protocol = { version = "0.94", path = "../nushell/crates/nu-protocol" }
+nu-plugin = { version = "0.94" }
+nu-protocol = { version = "0.94" }
 
 # highlighting
 syntect = "5"
 nu-ansi-term = "0.50"
 ansi_colours = "1"
-bat = { version = "0.24", default-features = false }
+bat = { version = "0.24.0", default-features = false, features = [
+    "build-assets",
+] }

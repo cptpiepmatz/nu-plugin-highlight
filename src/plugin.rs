@@ -1,5 +1,7 @@
 use std::env;
 use std::env::VarError;
+use std::process::Command;
+use std::str::from_utf8;
 
 use nu_plugin::{EngineInterface, EvaluatedCall, Plugin, PluginCommand, SimplePluginCommand};
 use nu_protocol::{
@@ -42,6 +44,11 @@ impl SimplePluginCommand for Highlight {
                 "them used for highlighting",
                 Some('t')
             )
+            .switch(
+                "build-cache",
+                "build cache directory (to use custom themes)",
+                None
+            )
             .switch("list-themes", "list all possible themes", None)
             .category(Category::Strings)
             .input_output_type(Type::String, Type::String)
@@ -70,13 +77,25 @@ impl SimplePluginCommand for Highlight {
         call: &EvaluatedCall,
         input: &Value
     ) -> Result<Value, LabeledError> {
-        let highlighter = Highlighter::new();
+        let config = engine.get_plugin_config()?;
+
+        if call.has_flag("build-cache")? {
+            let src_path = get_path("src_path", config.as_ref())?;
+            let cache_path = get_path("cache_path", config.as_ref())?;
+
+            return Highlighter::build_cache(src_path, cache_path)
+                .map(|ok_msg| Value::string(ok_msg, Span::new(0, 0)));
+        }
+
+        let cache_path = get_path("cache_path", config.as_ref())?;
+
+        println!("{cache_path:?}");
+
+        let highlighter = Highlighter::new(cache_path);
 
         if call.has_flag("list-themes")? {
             return Ok(highlighter.list_themes().into());
         }
-
-        let config = engine.get_plugin_config()?;
 
         let theme = extract_theme(
             |t| highlighter.is_valid_theme(t),
@@ -158,6 +177,48 @@ impl SimplePluginCommand for Highlight {
             ),
             example("List all available themes", "highlight --list-themes"),
         ]
+    }
+}
+
+fn get_path(arg: &str, config: Option<&Value>) -> Result<String, LabeledError> {
+    let arg_from_config = config
+        .ok_or_else(|| LabeledError::new("config not found in $env"))?
+        .get_data_by_key(arg);
+
+    let bat_arg = match arg {
+        "src_path" => Ok("--config-dir"),
+        "cache_path" => Ok("--cache-dir"),
+        _ => Err(LabeledError::new(format!(
+            "invalid parameter for get_path function: {arg:?}"
+        )))
+    }?;
+
+    if let Ok(s) = from_utf8(
+        &Command::new("bat")
+            .arg(bat_arg)
+            .output()
+            .map_err(|e| LabeledError::new(format!("Failed to run bat: {e}")))?
+            .stdout
+    )
+    .map_err(|e| LabeledError::new(format!("Parsing bat --config-dir failed: {e:?}")))
+    {
+        println!("Using bat defined path. Ignoring nu plugin config path for {arg:?}.");
+        Ok(s.trim_end().to_owned())
+    }
+    else if let Some(arg_from_config) = arg_from_config {
+        match arg_from_config {
+            Value::String {
+                val: arg_from_config,
+                internal_span: _
+            } => {
+                println!("Using nu plugin config path for {arg:?}.");
+                Ok(arg_from_config)
+            }
+            _ => Err(LabeledError::new(format!("{arg:?} field is not a string")))
+        }
+    }
+    else {
+        Err(LabeledError::new(format!("{arg:?} field is not defined")))
     }
 }
 
