@@ -25,7 +25,12 @@ impl Highlighter {
     pub fn new(cache_path: String) -> Self {
         let cache_path = PathBuf::from(cache_path);
         let highlighting_assets =
-            HighlightingAssets::from_cache(&cache_path).expect("Failed to load assets");
+            if let Ok(highlighting_assets) = HighlightingAssets::from_cache(&cache_path) {
+                highlighting_assets
+            }
+            else {
+                HighlightingAssets::from_binary()
+            };
 
         Highlighter {
             highlighting_assets
