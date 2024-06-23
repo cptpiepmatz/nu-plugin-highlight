@@ -65,13 +65,6 @@ The plugin can be configured using the
 [`$env.config.plugin.highlight`](https://github.com/nushell/nushell/pull/10955) 
 variable.
 
-> [!IMPORTANT]
-> The environment variables `NU_PLUGIN_HIGHLIGHT_TRUE_COLORS` and
-> `NU_PLUGIN_HIGHLIGHT_THEME` are currently still supported but considered
-> deprecated.
->
-> Start using `$env.config.plugin.highlight`.
-
 ### `true_colors`
 Enable or disable true colors (24-bit).
 By default, this is enabled.
