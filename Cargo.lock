@@ -1076,6 +1076,7 @@ dependencies = [
  "ansi_colours",
  "bat",
  "nu-ansi-term 0.50.0",
+ "nu-path",
  "nu-plugin",
  "nu-protocol",
  "syntect",
