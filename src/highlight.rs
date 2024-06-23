@@ -1,46 +1,81 @@
+use std::ops::Deref;
+use std::path::Path;
+
 use bat::assets::HighlightingAssets;
 use syntect::easy::HighlightLines;
+use syntect::highlighting::ThemeSet;
 use syntect::parsing::SyntaxReference;
+use syntect::LoadingError;
 
 use crate::terminal;
 use crate::theme::{ListThemes, ThemeDescription};
 
 /// The struct that handles the highlighting of code.
 pub struct Highlighter {
-    highlighting_assets: HighlightingAssets
+    highlighting_assets: HighlightingAssets,
+    custom_themes: Option<ThemeSet>
 }
 
 impl Highlighter {
     /// Creates a new instance of the Highlighter.
     pub fn new() -> Self {
         Highlighter {
-            highlighting_assets: HighlightingAssets::from_binary()
+            highlighting_assets: HighlightingAssets::from_binary(),
+            custom_themes: None
         }
+    }
+
+    pub fn custom_themes_from_folder(
+        &mut self,
+        path: impl AsRef<Path>
+    ) -> Result<(), LoadingError> {
+        let path = nu_path::expand_to_real_path(path);
+        self.custom_themes = Some(ThemeSet::load_from_folder(path)?);
+        Ok(())
     }
 
     /// Lists all the available themes.
     pub fn list_themes(&self, user_default: Option<&str>) -> ListThemes {
         let ha = &self.highlighting_assets;
         let default_theme_id = user_default.unwrap_or(HighlightingAssets::default_theme());
-        ListThemes(
-            ha.themes()
-                .map(|t_id| {
-                    let theme = ha.get_theme(t_id);
-                    ThemeDescription {
-                        id: t_id.to_owned(),
-                        name: theme.name.clone(),
-                        author: theme.author.clone(),
-                        default: default_theme_id == t_id
-                    }
-                })
-                .collect()
-        )
+
+        let mut themes: Vec<_> = ha
+            .themes()
+            .map(|t_id| {
+                let theme = ha.get_theme(t_id);
+                ThemeDescription {
+                    id: t_id.to_owned(),
+                    name: theme.name.clone(),
+                    author: theme.author.clone(),
+                    default: default_theme_id == t_id
+                }
+            })
+            .collect();
+
+        if let Some(custom_themes) = self.custom_themes.as_ref() {
+            for (id, theme) in custom_themes.themes.iter() {
+                themes.push(ThemeDescription {
+                    id: id.to_owned(),
+                    name: theme.name.clone(),
+                    author: theme.author.clone(),
+                    default: default_theme_id == id
+                });
+            }
+        }
+
+        ListThemes(themes)
     }
 
     /// Checks if a given theme id is valid.
     pub fn is_valid_theme(&self, theme_name: &str) -> bool {
         let ha = &self.highlighting_assets;
-        ha.themes().any(|t| t == theme_name)
+        let custom_themes = self
+            .custom_themes
+            .as_ref()
+            .map(|themes| themes.themes.keys())
+            .unwrap_or_default()
+            .map(Deref::deref);
+        custom_themes.chain(ha.themes()).any(|t| t == theme_name)
     }
 
     /// Highlights the given input text based on the provided language and
@@ -83,11 +118,16 @@ impl Highlighter {
             .or(syntax_set.find_syntax_by_first_line(input))
             .unwrap_or(syntax_set.find_syntax_plain_text());
 
-        let theme = match theme {
+        let theme_id = match theme {
             None => HighlightingAssets::default_theme(),
             Some(theme) => theme
         };
-        let theme = self.highlighting_assets.get_theme(theme);
+        let theme = self
+            .custom_themes
+            .as_ref()
+            .map(|themes| themes.themes.get(theme_id))
+            .flatten();
+        let theme = theme.unwrap_or_else(|| self.highlighting_assets.get_theme(theme_id));
 
         let mut highlighter = HighlightLines::new(syntax_ref, theme);
         let line_count = input.lines().count();
