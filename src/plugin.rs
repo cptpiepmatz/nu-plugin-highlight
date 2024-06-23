@@ -90,9 +90,9 @@ impl SimplePluginCommand for Highlight {
         if let Some(theme) = &theme {
             if !highlighter.is_valid_theme(&theme.item) {
                 return Err(labeled_error(
-                    "use `highlight --list-themes` to list all themes".into(),
+                    "use `highlight --list-themes` to list all themes",
                     format!("Unknown passed theme {:?}", &theme.item),
-                    Some(theme.span)
+                    theme.span
                 ));
             }
         }
@@ -114,17 +114,11 @@ impl SimplePluginCommand for Highlight {
                 call.head
             ),
             v => {
-                return Err(LabeledError {
-                    msg: format!("expected string, got {}", v.get_type()),
-                    labels: vec![ErrorLabel {
-                        text: "Expected source code as string from pipeline".to_owned(),
-                        span: call.head
-                    }],
-                    code: None,
-                    url: None,
-                    help: None,
-                    inner: vec![]
-                });
+                return Err(labeled_error(
+                    format!("expected string, got {}", v.get_type()),
+                    "Expected source code as string from pipeline",
+                    call.head
+                ));
             }
         };
 
@@ -170,12 +164,16 @@ impl SimplePluginCommand for Highlight {
 }
 
 /// Simple constructor for [`LabeledError`].
-fn labeled_error(msg: String, label: String, span: Option<Span>) -> LabeledError {
+fn labeled_error(
+    msg: impl ToString,
+    label: impl ToString,
+    span: impl Into<Option<Span>>
+) -> LabeledError {
     LabeledError {
-        msg,
+        msg: msg.to_string(),
         labels: vec![ErrorLabel {
-            text: label,
-            span: span.unwrap_or(Span::unknown())
+            text: label.to_string(),
+            span: span.into().unwrap_or(Span::unknown())
         }],
         code: None,
         url: None,
