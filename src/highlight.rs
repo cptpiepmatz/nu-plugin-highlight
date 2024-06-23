@@ -19,9 +19,9 @@ impl Highlighter {
     }
 
     /// Lists all the available themes.
-    pub fn list_themes(&self) -> ListThemes {
+    pub fn list_themes(&self, user_default: Option<&str>) -> ListThemes {
         let ha = &self.highlighting_assets;
-        let default_theme_id = HighlightingAssets::default_theme();
+        let default_theme_id = user_default.unwrap_or(HighlightingAssets::default_theme());
         ListThemes(
             ha.themes()
                 .map(|t_id| {
@@ -48,8 +48,8 @@ impl Highlighter {
     pub fn highlight(
         &self,
         input: &str,
-        language: &Option<String>,
-        theme: &Option<String>,
+        language: Option<&str>,
+        theme: Option<&str>,
         true_colors: bool
     ) -> String {
         let syntax_set = self.highlighting_assets.get_syntax_set().unwrap();
