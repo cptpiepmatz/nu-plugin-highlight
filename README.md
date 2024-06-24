@@ -90,7 +90,7 @@ Set a directory to load custom themes from.
 Using `synctect`s theme loader, you can load custom themes in the `.tmtheme` 
 format from a directory that is passed as this configuration value.
 ```nushell
-$env.config.plugin.highlight.custom_themes = ~/.nu/highlight/themes
+$env.config.plugins.highlight.custom_themes = ~/.nu/highlight/themes
 ```
 
 ## Plugin Installation
