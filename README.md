@@ -63,7 +63,7 @@ highlight --list-themes
 
 ## Configuration
 The plugin can be configured using the 
-[`$env.config.plugin.highlight`](https://github.com/nushell/nushell/pull/10955) 
+[`$env.config.plugins.highlight`](https://github.com/nushell/nushell/pull/10955) 
 variable.
 
 ### `true_colors`
@@ -78,7 +78,7 @@ Set a theme to use.
 The default theme depends on the operating system.
 Use `highlight --list-themes | where default == true` to see your default theme.
 Setting this environment variable should allow
-`highlight --list-themes | where id == $env.config.plugin.highlight.theme` to 
+`highlight --list-themes | where id == $env.config.plugins.highlight.theme` to 
 result in a single row with your selected theme.
 If you get no results, you have set an invalid theme.
 ```nushell
