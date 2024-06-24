@@ -70,7 +70,7 @@ variable.
 Enable or disable true colors (24-bit).
 By default, this is enabled.
 ```nushell
-$env.config.plugin.highlight.true_colors = true
+$env.config.plugins.highlight.true_colors = true
 ```
 
 ### `theme`
@@ -82,7 +82,7 @@ Setting this environment variable should allow
 result in a single row with your selected theme.
 If you get no results, you have set an invalid theme.
 ```nushell
-$env.config.plugin.highlight.theme = ansi
+$env.config.plugins.highlight.theme = ansi
 ```
 
 ### `custom_themes`
