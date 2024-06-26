@@ -13,6 +13,7 @@ categories = ["command-line-utilities", "development-tools", "value-formatting"]
 # nu
 nu-plugin = { version = "0.94", path = "../nushell/crates/nu-plugin" }
 nu-protocol = { version = "0.94", path = "../nushell/crates/nu-protocol" }
+nu-path = { version = "0.94", path = "../nushell/crates/nu-path" }
 
 # highlighting
 syntect = "5"

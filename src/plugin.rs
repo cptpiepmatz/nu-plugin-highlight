@@ -1,4 +1,5 @@
 use std::env;
+use std::path::PathBuf;
 
 use nu_plugin::{EngineInterface, EvaluatedCall, Plugin, PluginCommand, SimplePluginCommand};
 use nu_protocol::{
@@ -24,7 +25,8 @@ impl Plugin for HighlightPlugin {
 #[derive(Debug, FromValue, Default)]
 struct Config {
     pub theme: Option<Spanned<String>>,
-    pub true_colors: Option<bool>
+    pub true_colors: Option<bool>,
+    pub custom_themes: Option<Spanned<PathBuf>>
 }
 
 struct Highlight;
@@ -77,10 +79,20 @@ impl SimplePluginCommand for Highlight {
         call: &EvaluatedCall,
         input: &Value
     ) -> Result<Value, LabeledError> {
-        let highlighter = Highlighter::new();
+        let mut highlighter = Highlighter::new();
 
         let config = Option::<Config>::from_value(engine.get_plugin_config()?.unwrap_or_default())?
             .unwrap_or_default();
+
+        if let Some(custom_themes_path) = config.custom_themes {
+            if let Err(err) = highlighter.custom_themes_from_folder(&custom_themes_path.item) {
+                return Err(labeled_error(
+                    err,
+                    "error while loading custom themes",
+                    custom_themes_path.span
+                ));
+            }
+        }
 
         let theme = call
             .get_flag_value("theme")

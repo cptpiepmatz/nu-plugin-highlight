@@ -24,6 +24,7 @@ provides syntax highlighting for source code.
 It uses the [`syntect`](https://crates.io/crates/syntect) library for syntax 
 highlighting and the [`bat`](https://crates.io/crates/bat) library for easy 
 access to its ready-to-use assets.
+Custom themes can be loaded too.
 
 ## Usage
 The `highlight` command can be used for syntax highlighting source code. 
@@ -82,6 +83,14 @@ result in a single row with your selected theme.
 If you get no results, you have set an invalid theme.
 ```nushell
 $env.config.plugins.highlight.theme = ansi
+```
+
+### `custom_themes`
+Set a directory to load custom themes from.
+Using `synctect`s theme loader, you can load custom themes in the `.tmtheme` 
+format from a directory that is passed as this configuration value.
+```nushell
+$env.config.plugins.highlight.custom_themes = ~/.nu/highlight/themes
 ```
 
 ## Plugin Installation
