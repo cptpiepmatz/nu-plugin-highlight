@@ -3,8 +3,7 @@ use std::path::PathBuf;
 
 use nu_plugin::{EngineInterface, EvaluatedCall, Plugin, PluginCommand, SimplePluginCommand};
 use nu_protocol::{
-    Category, ErrorLabel, Example, FromValue, LabeledError, Signature, Span, Spanned, SyntaxShape,
-    Type, Value
+    Category, ErrorLabel, Example, FromValue, IntoValue, LabeledError, Signature, Span, Spanned, SyntaxShape, Type, Value
 };
 
 use crate::highlight::Highlighter;
@@ -114,7 +113,7 @@ impl SimplePluginCommand for Highlight {
         let true_colors = config.true_colors.unwrap_or(true);
 
         if call.has_flag("list-themes")? {
-            return Ok(highlighter.list_themes(theme).into());
+            return Ok(highlighter.list_themes(theme).into_value(call.head));
         }
 
         let language = call.opt(0)?.map(String::from_value).transpose()?;
