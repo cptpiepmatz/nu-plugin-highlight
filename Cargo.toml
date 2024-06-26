@@ -1,6 +1,6 @@
 [package]
 name = "nu_plugin_highlight"
-version = "1.1.4+0.94.0"
+version = "1.2.0+0.95.0"
 authors = ["Tim 'Piepmatz' Hesse"]
 edition = "2021"
 repository = "https://github.com/cptpiepmatz/nu-plugin-highlight"
@@ -11,9 +11,9 @@ categories = ["command-line-utilities", "development-tools", "value-formatting"]
 
 [dependencies]
 # nu
-nu-plugin = { version = "0.94", path = "../nushell/crates/nu-plugin" }
-nu-protocol = { version = "0.94", path = "../nushell/crates/nu-protocol" }
-nu-path = { version = "0.94", path = "../nushell/crates/nu-path" }
+nu-plugin = { version = "0.95", path = "../nushell/crates/nu-plugin" }
+nu-protocol = { version = "0.95", path = "../nushell/crates/nu-protocol" }
+nu-path = { version = "0.95", path = "../nushell/crates/nu-path" }
 
 # highlighting
 syntect = "5"
