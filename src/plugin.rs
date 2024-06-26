@@ -3,7 +3,8 @@ use std::path::PathBuf;
 
 use nu_plugin::{EngineInterface, EvaluatedCall, Plugin, PluginCommand, SimplePluginCommand};
 use nu_protocol::{
-    Category, ErrorLabel, Example, FromValue, IntoValue, LabeledError, Signature, Span, Spanned, SyntaxShape, Type, Value
+    Category, ErrorLabel, Example, FromValue, IntoValue, LabeledError, Signature, Span, Spanned,
+    SyntaxShape, Type, Value
 };
 
 use crate::highlight::Highlighter;
