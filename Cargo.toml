@@ -1,6 +1,6 @@
 [package]
 name = "nu_plugin_highlight"
-version = "1.2.1+0.96.1"
+version = "1.2.2+0.97.1"
 authors = ["Tim 'Piepmatz' Hesse"]
 edition = "2021"
 repository = "https://github.com/cptpiepmatz/nu-plugin-highlight"
@@ -11,9 +11,9 @@ categories = ["command-line-utilities", "development-tools", "value-formatting"]
 
 [dependencies]
 # nu
-nu-plugin = "0.96.1"
-nu-protocol = "0.96.1"
-nu-path = "0.96.1"
+nu-plugin = "0.97.1"
+nu-protocol = "0.97.1"
+nu-path = "0.97.1"
 
 # highlighting
 syntect = "5"
