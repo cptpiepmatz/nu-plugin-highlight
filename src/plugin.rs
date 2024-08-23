@@ -68,7 +68,7 @@ impl SimplePluginCommand for Highlight {
             )
     }
 
-    fn usage(&self) -> &str {
+    fn description(&self) -> &str {
         "Syntax highlight source code."
     }
 

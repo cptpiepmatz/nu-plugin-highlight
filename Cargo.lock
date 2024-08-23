@@ -933,9 +933,8 @@ dependencies = [
 
 [[package]]
 name = "nu-derive-value"
-version = "0.97.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4e4640556d6abc057dab7001bf5612f6b9b144ce739bfa0669d66fbf1ef7ad28"
+version = "0.97.2"
+source = "git+https://github.com/nushell/nushell.git#05608264145062e8446aabcd4470ed0870501767"
 dependencies = [
  "convert_case",
  "proc-macro-error",
@@ -946,9 +945,8 @@ dependencies = [
 
 [[package]]
 name = "nu-engine"
-version = "0.97.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "aa524164c6d87d9ce4dd1122525a539f92a77f4fbb6494452976cc2fa691742d"
+version = "0.97.2"
+source = "git+https://github.com/nushell/nushell.git#05608264145062e8446aabcd4470ed0870501767"
 dependencies = [
  "log",
  "nu-glob",
@@ -960,15 +958,13 @@ dependencies = [
 
 [[package]]
 name = "nu-glob"
-version = "0.97.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f4097b0014c26a039018990a4fe8d8fd5658c00e94621b34751869649b0aa942"
+version = "0.97.2"
+source = "git+https://github.com/nushell/nushell.git#05608264145062e8446aabcd4470ed0870501767"
 
 [[package]]
 name = "nu-path"
-version = "0.97.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "96b4a7d68a196e55c8e2c8685293bc1c17e9c13aa7dac5bcbe04a2a841e92770"
+version = "0.97.2"
+source = "git+https://github.com/nushell/nushell.git#05608264145062e8446aabcd4470ed0870501767"
 dependencies = [
  "dirs",
  "omnipath",
@@ -977,9 +973,8 @@ dependencies = [
 
 [[package]]
 name = "nu-plugin"
-version = "0.97.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a6b2c69b4b0963fa2d1312a5df115a35b0f523e54b95d013eec87791806ff11d"
+version = "0.97.2"
+source = "git+https://github.com/nushell/nushell.git#05608264145062e8446aabcd4470ed0870501767"
 dependencies = [
  "log",
  "nix",
@@ -993,9 +988,8 @@ dependencies = [
 
 [[package]]
 name = "nu-plugin-core"
-version = "0.97.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3dddcc6ef62272eedaa18f7f004090781969b99c29d4973a4dac6e4ce4395097"
+version = "0.97.2"
+source = "git+https://github.com/nushell/nushell.git#05608264145062e8446aabcd4470ed0870501767"
 dependencies = [
  "interprocess",
  "log",
@@ -1009,9 +1003,8 @@ dependencies = [
 
 [[package]]
 name = "nu-plugin-protocol"
-version = "0.97.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2716cc05722738406c1714c9788969dd10d75a3d4eddbf86b3ad423df1a5d74a"
+version = "0.97.2"
+source = "git+https://github.com/nushell/nushell.git#05608264145062e8446aabcd4470ed0870501767"
 dependencies = [
  "bincode",
  "nu-protocol",
@@ -1023,12 +1016,12 @@ dependencies = [
 
 [[package]]
 name = "nu-protocol"
-version = "0.97.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "38ae5262aabe662ac1cc02a6e8d3fdb48fa8bb25c77be72d2e8a625a7c3e4812"
+version = "0.97.2"
+source = "git+https://github.com/nushell/nushell.git#05608264145062e8446aabcd4470ed0870501767"
 dependencies = [
  "brotli",
  "byte-unit",
+ "bytes",
  "chrono",
  "chrono-humanize",
  "convert_case",
@@ -1055,9 +1048,8 @@ dependencies = [
 
 [[package]]
 name = "nu-system"
-version = "0.97.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "52ed001bb4cb39b4235871cb00650b79497084fc46beaf019d226239119d3ef5"
+version = "0.97.2"
+source = "git+https://github.com/nushell/nushell.git#05608264145062e8446aabcd4470ed0870501767"
 dependencies = [
  "chrono",
  "itertools",
@@ -1075,9 +1067,8 @@ dependencies = [
 
 [[package]]
 name = "nu-utils"
-version = "0.97.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "88d91a233afaa875d01784c898f4464755cbefb5eaf8845032d651e39ac6354f"
+version = "0.97.2"
+source = "git+https://github.com/nushell/nushell.git#05608264145062e8446aabcd4470ed0870501767"
 dependencies = [
  "crossterm_winapi",
  "log",
@@ -1092,7 +1083,7 @@ dependencies = [
 
 [[package]]
 name = "nu_plugin_highlight"
-version = "1.2.2+0.97.1"
+version = "1.2.3-0.97.2"
 dependencies = [
  "ansi_colours",
  "bat",
