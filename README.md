@@ -29,18 +29,21 @@ Custom themes can be loaded too.
 ## Usage
 The `highlight` command can be used for syntax highlighting source code. 
 Here are a few examples:
-```nushell 
+```nushell
+# Highlight a Markdown file by guessing the type from the pipeline metadata
+open README.md | highlight
+
 # Highlight a TOML file by its file extension
-open Cargo.toml -r | highlight toml
+open Cargo.toml -r | echo $in | highlight toml
 
 # Highlight a Rust file by programming language name
-open src/main.rs | highlight Rust
+open src/main.rs | echo $in | highlight Rust
 
 # Highlight a bash script by inferring the language (the file should start with a shebang)
-open example.sh | highlight
+open example.sh | echo $in | highlight
 
 # Highlight a TOML file with a different theme
-open Cargo.toml -r | highlight toml -t ansi
+open Cargo.toml -r | highlight -t ansi
 
 # List all available themes
 highlight --list-themes

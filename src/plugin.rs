@@ -155,20 +155,24 @@ impl PluginCommand for Highlight {
 
         vec![
             example(
+                "Highlight a Markdown file by guessing the type from the pipeline metadata",
+                "open README.md | highlight"
+            ),
+            example(
                 "Highlight a toml file by its file extension",
-                "open Cargo.toml -r | highlight toml"
+                "open Cargo.toml -r | echo $in | highlight toml"
             ),
             example(
                 "Highlight a rust file by programming language",
-                "open src/main.rs | highlight Rust"
+                "open src/main.rs | echo $in | highlight Rust"
             ),
             example(
                 "Highlight a bash script by inferring the language (needs shebang)",
-                "open example.sh | highlight"
+                "open example.sh | echo $in | highlight"
             ),
             example(
                 "Highlight a toml file with another theme",
-                "open Cargo.toml -r | highlight toml -t ansi"
+                "open Cargo.toml -r | highlight -t ansi"
             ),
             example("List all available themes", "highlight --list-themes"),
         ]
