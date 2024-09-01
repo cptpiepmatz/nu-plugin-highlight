@@ -193,9 +193,11 @@ fn language_hint(
         let content_type = content_type?.as_str();
         let content_type = Mime::from_str(content_type).ok()?;
         let sub_type = content_type.subtype().to_string();
-        match sub_type.starts_with("x-") {
-            true => None, // we cannot be sure about this type,
-            false => Some(sub_type)
+        match sub_type.as_str() {
+            "tab-separated-values" => Some("tsv".to_string()),
+            "x-toml" => Some("toml".to_string()),
+            s if s.starts_with("x-") => None, // we cannot be sure about this type,
+            _ => Some(sub_type)
         }
     };
 
