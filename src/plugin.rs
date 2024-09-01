@@ -1,10 +1,11 @@
-use std::env;
 use std::path::PathBuf;
+use std::str::FromStr;
 
-use nu_plugin::{EngineInterface, EvaluatedCall, Plugin, PluginCommand, SimplePluginCommand};
+use mime_guess::Mime;
+use nu_plugin::{EngineInterface, EvaluatedCall, Plugin, PluginCommand};
 use nu_protocol::{
-    Category, ErrorLabel, Example, FromValue, IntoValue, LabeledError, Signature, Span, Spanned,
-    SyntaxShape, Type, Value
+    Category, DataSource, ErrorLabel, Example, FromValue, IntoValue, LabeledError, PipelineData,
+    PipelineMetadata, ShellError, Signature, Span, Spanned, SyntaxShape, Type, Value
 };
 
 use crate::highlight::Highlighter;
@@ -31,7 +32,7 @@ struct Config {
 
 struct Highlight;
 
-impl SimplePluginCommand for Highlight {
+impl PluginCommand for Highlight {
     type Plugin = HighlightPlugin;
 
     fn name(&self) -> &str {
@@ -77,8 +78,8 @@ impl SimplePluginCommand for Highlight {
         _plugin: &Self::Plugin,
         engine: &EngineInterface,
         call: &EvaluatedCall,
-        input: &Value
-    ) -> Result<Value, LabeledError> {
+        input: PipelineData
+    ) -> Result<PipelineData, LabeledError> {
         let mut highlighter = Highlighter::new();
 
         let config = Option::<Config>::from_value(engine.get_plugin_config()?.unwrap_or_default())?
@@ -89,7 +90,8 @@ impl SimplePluginCommand for Highlight {
                 return Err(labeled_error(
                     err,
                     "error while loading custom themes",
-                    custom_themes_path.span
+                    custom_themes_path.span,
+                    None
                 ));
             }
         }
@@ -104,7 +106,8 @@ impl SimplePluginCommand for Highlight {
                 return Err(labeled_error(
                     "use `highlight --list-themes` to list all themes",
                     format!("Unknown passed theme {:?}", &theme.item),
-                    theme.span
+                    theme.span,
+                    None
                 ));
             }
         }
@@ -114,27 +117,24 @@ impl SimplePluginCommand for Highlight {
         let true_colors = config.true_colors.unwrap_or(true);
 
         if call.has_flag("list-themes")? {
-            return Ok(highlighter.list_themes(theme).into_value(call.head));
+            let themes = highlighter.list_themes(theme).into_value(call.head);
+            return Ok(PipelineData::Value(themes, None));
         }
 
-        let language = call.opt(0)?.map(String::from_value).transpose()?;
+        let (input, span, metadata) = input.collect_string_strict(call.head).map_err(|e| {
+            labeled_error(
+                // TODO: get the type again, somehow
+                "lmao", //format!("expected string, got {}", v.get_type()),
+                "Expected source code as string from pipeline",
+                call.head,
+                e
+            )
+        })?;
 
-        // try to highlight if input is a string
-        let ret_val = match input {
-            Value::String { val, .. } => Value::string(
-                highlighter.highlight(val, language.as_deref(), theme, true_colors),
-                call.head
-            ),
-            v => {
-                return Err(labeled_error(
-                    format!("expected string, got {}", v.get_type()),
-                    "Expected source code as string from pipeline",
-                    call.head
-                ));
-            }
-        };
-
-        Ok(ret_val)
+        let language = language_hint(call, metadata.as_ref())?;
+        let highlighted = highlighter.highlight(&input, language.as_deref(), theme, true_colors);
+        let highlighted = Value::string(highlighted, span);
+        Ok(PipelineData::Value(highlighted, metadata))
     }
 
     fn search_terms(&self) -> Vec<&str> {
@@ -175,11 +175,46 @@ impl SimplePluginCommand for Highlight {
     }
 }
 
+fn language_hint(
+    call: &EvaluatedCall,
+    metadata: Option<&PipelineMetadata>
+) -> Result<Option<String>, ShellError> {
+    // first use passed argument
+    let arg = call.opt(0)?.map(String::from_value).transpose()?;
+
+    // then try to parse a mime type
+    let content_type = || -> Option<String> {
+        let metadata = metadata?;
+        let content_type = metadata.content_type.as_ref();
+        let content_type = content_type?.as_str();
+        let content_type = Mime::from_str(content_type).ok()?;
+        let sub_type = content_type.subtype().to_string();
+        match sub_type.starts_with("x-") {
+            true => None, // we cannot be sure about this type,
+            false => Some(sub_type)
+        }
+    };
+
+    // as last resort, try to use the extension of data source
+    let data_source = || -> Option<String> {
+        let data_source = &metadata?.data_source;
+        let DataSource::FilePath(path) = data_source
+        else {
+            return None;
+        };
+        let extension = path.extension()?.to_string_lossy();
+        Some(extension.to_string())
+    };
+
+    Ok(arg.or_else(content_type).or_else(data_source))
+}
+
 /// Simple constructor for [`LabeledError`].
 fn labeled_error(
     msg: impl ToString,
     label: impl ToString,
-    span: impl Into<Option<Span>>
+    span: impl Into<Option<Span>>,
+    inner: impl Into<Option<ShellError>>
 ) -> LabeledError {
     LabeledError {
         msg: msg.to_string(),
@@ -190,6 +225,9 @@ fn labeled_error(
         code: None,
         url: None,
         help: None,
-        inner: vec![]
+        inner: match inner.into() {
+            Some(inner) => vec![inner.into()],
+            None => vec![]
+        }
     }
 }
