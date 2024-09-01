@@ -21,3 +21,6 @@ syntect = "5"
 nu-ansi-term = "0.50"
 ansi_colours = "1"
 bat = { version = "0.24", default-features = false }
+
+# guess the type
+mime_guess = "2"
