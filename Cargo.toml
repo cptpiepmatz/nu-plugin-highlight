@@ -8,7 +8,6 @@ description = "A nushell plugin for syntax highlighting"
 license = "MIT"
 keywords = ["nu", "plugin", "syntax", "highlighting"]
 categories = ["command-line-utilities", "development-tools", "value-formatting"]
-publish = false
 
 [dependencies]
 # nu
