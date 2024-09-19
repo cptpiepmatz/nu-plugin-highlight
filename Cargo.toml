@@ -12,9 +12,9 @@ publish = false
 
 [dependencies]
 # nu
-nu-plugin = { version = "0.97.2", git = "https://github.com/nushell/nushell.git" }
-nu-protocol = { version = "0.97.2", git = "https://github.com/nushell/nushell.git" }
-nu-path = { version = "0.97.2", git = "https://github.com/nushell/nushell.git" }
+nu-plugin = "0.98"
+nu-protocol = "0.98"
+nu-path = "0.98"
 
 # highlighting
 syntect = "5"
