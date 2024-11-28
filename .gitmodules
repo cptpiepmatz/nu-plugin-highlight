@@ -1,0 +1,3 @@
+[submodule "syntaxes/nushell"]
+	path = syntaxes/nushell
+	url = https://github.com/kurokirasama/nushell_sublime_syntax.git
