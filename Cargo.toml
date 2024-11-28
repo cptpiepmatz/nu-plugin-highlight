@@ -1,6 +1,6 @@
 [package]
 name = "nu_plugin_highlight"
-version = "1.3.3+0.100.0"
+version = "1.4.0+0.100.0"
 authors = ["Tim 'Piepmatz' Hesse"]
 edition = "2021"
 repository = "https://github.com/cptpiepmatz/nu-plugin-highlight"
@@ -9,6 +9,11 @@ license = "MIT"
 keywords = ["nu", "plugin", "syntax", "highlighting"]
 categories = ["command-line-utilities", "development-tools", "value-formatting"]
 
+[workspace.dependencies]
+# share dependencies with build dependencies
+syntect = "5"
+bat = { version = "0.24", default-features = false }
+
 [dependencies]
 # nu
 nu-plugin = "0.100.0"
@@ -16,10 +21,15 @@ nu-protocol = "0.100.0"
 nu-path = "0.100.0"
 
 # highlighting
-syntect = "5"
+syntect = { workspace = true }
 nu-ansi-term = "0.50"
 ansi_colours = "1"
-bat = { version = "0.24", default-features = false }
+bat = { workspace = true }
 
 # guess the type
 mime_guess = "2"
+
+[build-dependencies]
+patch-apply = "0.8.3"
+syntect = {workspace = true}
+bat = {workspace = true}

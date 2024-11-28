@@ -4,14 +4,17 @@ use std::path::Path;
 use bat::assets::HighlightingAssets;
 use syntect::easy::HighlightLines;
 use syntect::highlighting::ThemeSet;
-use syntect::parsing::SyntaxReference;
+use syntect::parsing::{SyntaxReference, SyntaxSet};
 use syntect::LoadingError;
 
 use crate::terminal;
 use crate::theme::{ListThemes, ThemeDescription};
 
+const SYNTAX_SET: &[u8] = include_bytes!("../target/syntax_set.bin");
+
 /// The struct that handles the highlighting of code.
 pub struct Highlighter {
+    syntax_set: SyntaxSet,
     highlighting_assets: HighlightingAssets,
     custom_themes: Option<ThemeSet>
 }
@@ -20,6 +23,7 @@ impl Highlighter {
     /// Creates a new instance of the Highlighter.
     pub fn new() -> Self {
         Highlighter {
+            syntax_set: syntect::dumps::from_uncompressed_data(SYNTAX_SET).unwrap(),
             highlighting_assets: HighlightingAssets::from_binary(),
             custom_themes: None
         }
@@ -87,7 +91,7 @@ impl Highlighter {
         theme: Option<&str>,
         true_colors: bool
     ) -> String {
-        let syntax_set = self.highlighting_assets.get_syntax_set().unwrap();
+        let syntax_set = &self.syntax_set;
         let syntax_ref: Option<&SyntaxReference> = match language {
             Some(language) if !language.is_empty() => {
                 // allow multiple variants to write the language
@@ -141,7 +145,7 @@ impl Highlighter {
                     true => l.trim_end().to_owned()
                 };
 
-                let styled_lines = highlighter.highlight_line(&l, syntax_set).unwrap();
+                let styled_lines = highlighter.highlight_line(&l, &syntax_set).unwrap();
                 styled_lines
                     .iter()
                     .map(|(style, s)| {
