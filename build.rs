@@ -12,6 +12,7 @@ fn main() {
     println!("cargo:rerun-if-changed=Cargo.toml");
     println!("cargo:rerun-if-changed=syntaxes/nushell/nushell.sublime-syntax");
     println!("cargo:rerun-if-changed=syntaxes/patches/nushell.sublime-syntax.patch");
+    println!("cargo:rerun-if-env-changed=OUT_DIR");
 
     let syntax_set = HighlightingAssets::from_binary()
         .get_syntax_set()
@@ -28,6 +29,6 @@ fn main() {
     let syntax_set = syntax_set_builder.build();
 
     let out_path = std::env::var("OUT_DIR").unwrap();
-    let out_path = PathBuf::from(out_path).join("../../../../syntax_set.bin");
+    let out_path = PathBuf::from(out_path).join("syntax_set.bin");
     syntect::dumps::dump_to_uncompressed_file(&syntax_set, out_path).unwrap();
 }

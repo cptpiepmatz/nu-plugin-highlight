@@ -10,7 +10,7 @@ use syntect::LoadingError;
 use crate::terminal;
 use crate::theme::{ListThemes, ThemeDescription};
 
-const SYNTAX_SET: &[u8] = include_bytes!("../target/syntax_set.bin");
+const SYNTAX_SET: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/syntax_set.bin"));
 
 /// The struct that handles the highlighting of code.
 pub struct Highlighter {

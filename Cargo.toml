@@ -1,6 +1,6 @@
 [package]
 name = "nu_plugin_highlight"
-version = "1.4.0+0.100.0"
+version = "1.4.1+0.100.0"
 authors = ["Tim 'Piepmatz' Hesse"]
 edition = "2021"
 repository = "https://github.com/cptpiepmatz/nu-plugin-highlight"
