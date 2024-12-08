@@ -9,14 +9,13 @@
 
 <br>
 
-<p align="center">
-  <a href="https://crates.io/crates/nu-plugin-highlight">
-    <img alt="Version" src="https://img.shields.io/crates/v/nu-plugin-highlight?style=for-the-badge"/>
-  </a>
-  <a href="https://github.com/cptpiepmatz/nu-plugin-highlight/blob/main/LICENSE">
-    <img alt="License" src="https://img.shields.io/crates/l/nu-plugin-highlight?style=for-the-badge"/>  
-  </a>
-</p>
+<div align="center">
+
+  [![Version](https://img.shields.io/crates/v/nu-plugin-highlight?style=for-the-badge)](https://crates.io/crates/nu-plugin-highlight)
+  [![License](https://img.shields.io/crates/l/nu-plugin-highlight?style=for-the-badge)](https://github.com/cptpiepmatz/nu-plugin-highlight/blob/main/LICENSE)
+
+</div>
+
 
 ## About
 `nu-plugin-highlight` is a plugin for [Nushell](https://www.nushell.sh) that 
