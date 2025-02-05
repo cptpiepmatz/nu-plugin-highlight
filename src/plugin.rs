@@ -3,10 +3,12 @@ use std::str::FromStr;
 
 use mime_guess::Mime;
 use nu_plugin::{EngineInterface, EvaluatedCall, Plugin, PluginCommand};
+use nu_protocol::shell_error::io::IoError;
 use nu_protocol::{
     Category, DataSource, ErrorLabel, Example, FromValue, IntoValue, LabeledError, PipelineData,
     PipelineMetadata, ShellError, Signature, Span, Spanned, SyntaxShape, Type, Value
 };
+use syntect::LoadingError;
 
 use crate::highlight::Highlighter;
 
@@ -86,13 +88,26 @@ impl PluginCommand for Highlight {
             .unwrap_or_default();
 
         if let Some(custom_themes_path) = config.custom_themes {
-            if let Err(err) = highlighter.custom_themes_from_folder(&custom_themes_path.item) {
-                return Err(labeled_error(
-                    err,
-                    "error while loading custom themes",
-                    custom_themes_path.span,
-                    None
-                ));
+            match highlighter.custom_themes_from_folder(&custom_themes_path.item) {
+                Ok(_) => (),
+                Err(LoadingError::Io(err)) => {
+                    return Err(LabeledError::from(ShellError::from(
+                        IoError::new_with_additional_context(
+                            err.kind(),
+                            custom_themes_path.span,
+                            custom_themes_path.item,
+                            "Error while loading custom themes"
+                        )
+                    )))
+                }
+                Err(err) => {
+                    return Err(labeled_error(
+                        err,
+                        "Error while loading custom themes",
+                        custom_themes_path.span,
+                        None
+                    ))
+                }
             }
         }
 
@@ -121,15 +136,9 @@ impl PluginCommand for Highlight {
             return Ok(PipelineData::Value(themes, None));
         }
 
-        let (input, span, metadata) = input.collect_string_strict(call.head).map_err(|e| {
-            labeled_error(
-                // TODO: get the type again, somehow
-                "lmao", //format!("expected string, got {}", v.get_type()),
-                "Expected source code as string from pipeline",
-                call.head,
-                e
-            )
-        })?;
+        let metadata = input.metadata();
+        let input = input.into_value(call.head)?;
+        let Spanned { item: input, span } = Spanned::<String>::from_value(input)?;
 
         let language = language_hint(call, metadata.as_ref())?;
         let highlighted = highlighter.highlight(&input, language.as_deref(), theme, true_colors);
@@ -219,21 +228,21 @@ fn language_hint(
 fn labeled_error(
     msg: impl ToString,
     label: impl ToString,
-    span: impl Into<Option<Span>>,
+    span: Span,
     inner: impl Into<Option<ShellError>>
 ) -> LabeledError {
     LabeledError {
         msg: msg.to_string(),
-        labels: vec![ErrorLabel {
+        labels: Box::new(vec![ErrorLabel {
             text: label.to_string(),
-            span: span.into().unwrap_or(Span::unknown())
-        }],
+            span
+        }]),
         code: None,
         url: None,
         help: None,
         inner: match inner.into() {
-            Some(inner) => vec![inner.into()],
-            None => vec![]
+            Some(inner) => Box::new(vec![inner.into()]),
+            None => Box::new(vec![])
         }
     }
 }

@@ -1,6 +1,6 @@
 [package]
 name = "nu_plugin_highlight"
-version = "1.4.2+0.101.0"
+version = "1.4.3+0.102.0"
 authors = ["Tim 'Piepmatz' Hesse"]
 edition = "2021"
 repository = "https://github.com/cptpiepmatz/nu-plugin-highlight"
@@ -16,9 +16,9 @@ bat = { version = "0.24", default-features = false }
 
 [dependencies]
 # nu
-nu-plugin = "0.101.0"
-nu-protocol = "0.101.0"
-nu-path = "0.101.0"
+nu-plugin = "0.102.0"
+nu-protocol = "0.102.0"
+nu-path = "0.102.0"
 
 # highlighting
 syntect = { workspace = true }
@@ -31,5 +31,5 @@ mime_guess = "2"
 
 [build-dependencies]
 patch-apply = "0.8.3"
-syntect = {workspace = true}
-bat = {workspace = true}
+syntect = { workspace = true }
+bat = { workspace = true }
