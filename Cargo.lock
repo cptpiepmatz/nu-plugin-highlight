@@ -890,12 +890,12 @@ dependencies = [
 
 [[package]]
 name = "nu-derive-value"
-version = "0.102.0"
+version = "0.103.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2316ae007dbd5485cc7e717154423380acabf933bbe7b3bb8b2f7f1c91ccc962"
+checksum = "8f1f5198366892552a9a827a61a27e31543a0827c55ccfb6bf060489cec80d25"
 dependencies = [
  "heck",
- "proc-macro-error",
+ "proc-macro-error2",
  "proc-macro2",
  "quote",
  "syn",
@@ -903,9 +903,9 @@ dependencies = [
 
 [[package]]
 name = "nu-engine"
-version = "0.102.0"
+version = "0.103.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c683ba1257530c31ef04c9db61dd03873d5cd6e342ace2ea979b83ebb5facbb0"
+checksum = "0cb715bb4c18e4259d21c5b710f04f7190c9803211e2a0baa31ec3a5841daa56"
 dependencies = [
  "log",
  "nu-glob",
@@ -916,15 +916,18 @@ dependencies = [
 
 [[package]]
 name = "nu-glob"
-version = "0.102.0"
+version = "0.103.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ca39e05b7e710701b4a979053449c54c68418319e55bcf8cff5d220b7b7bc916"
+checksum = "904fa576593ed75439eec561f62824bbe55f4a05f1c8239309a939d43e0ad704"
+dependencies = [
+ "nu-protocol",
+]
 
 [[package]]
 name = "nu-path"
-version = "0.102.0"
+version = "0.103.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8b34402c223280f2a12b40562c92d5e39e66dbcf8e63d984b788758e67bfc1fa"
+checksum = "e6e3a55f26e42d1f98fbb4f41fa4fcc7dee1f61f13c5eabda5ca90e78825b2fa"
 dependencies = [
  "dirs",
  "omnipath",
@@ -934,9 +937,9 @@ dependencies = [
 
 [[package]]
 name = "nu-plugin"
-version = "0.102.0"
+version = "0.103.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "42961e81fcd9fc25498d79f6a54c120d4c3d14d30bde5aaa16cba13ced15878e"
+checksum = "5f35f2290c077441edfde50745b501ba5ffad11217d5d01168cf1ab1b0e4c03d"
 dependencies = [
  "log",
  "nix",
@@ -950,9 +953,9 @@ dependencies = [
 
 [[package]]
 name = "nu-plugin-core"
-version = "0.102.0"
+version = "0.103.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ed8f3991be99d14ac082bf7fe6f977959d5239b39f5d1ae570d8be08ef893cf5"
+checksum = "5ba6f1d1c7f6ca9852c26e8e65a0f530b8fa3a1237a6c62de089ccaf6c1645fe"
 dependencies = [
  "interprocess",
  "log",
@@ -966,9 +969,9 @@ dependencies = [
 
 [[package]]
 name = "nu-plugin-protocol"
-version = "0.102.0"
+version = "0.103.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cacf325471dbea88c6c7db60476025906b9ba88447f4ba981de70df068647061"
+checksum = "88bef165a59909561b349fb3eda7e16afae8f8d06d6c99527b4545c086b51f87"
 dependencies = [
  "nu-protocol",
  "nu-utils",
@@ -980,9 +983,9 @@ dependencies = [
 
 [[package]]
 name = "nu-protocol"
-version = "0.102.0"
+version = "0.103.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3054343abc3428da886970f7fe6feee895a96da0323497b61bccf700fed4d265"
+checksum = "ca35b5860d171e8e0994d42373f62fc99fb7a0b205e5d8a38897e2869d5f6ab7"
 dependencies = [
  "brotli",
  "bytes",
@@ -1007,6 +1010,8 @@ dependencies = [
  "rmp-serde",
  "serde",
  "serde_json",
+ "strum",
+ "strum_macros",
  "thiserror 2.0.11",
  "typetag",
  "web-time",
@@ -1015,9 +1020,9 @@ dependencies = [
 
 [[package]]
 name = "nu-system"
-version = "0.102.0"
+version = "0.103.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2588df6916f3b441cfd88babdcbe24e31a04dd4b492e7a30b4f983495fdb0926"
+checksum = "70bb9b1c59acd274bd36b4879e1e03491a3ee2f24689a9070c66fbd8aed23b27"
 dependencies = [
  "chrono",
  "itertools",
@@ -1035,9 +1040,9 @@ dependencies = [
 
 [[package]]
 name = "nu-utils"
-version = "0.102.0"
+version = "0.103.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a5929f17bc53de1a081c18b6ce968e41f9ef8cf0c1e0cf9276ed72749a653475"
+checksum = "2f01345a3c94f75397020250286c536e1b306cb714b2931c1a1c9a3318254793"
 dependencies = [
  "crossterm",
  "crossterm_winapi",
@@ -1055,7 +1060,7 @@ dependencies = [
 
 [[package]]
 name = "nu_plugin_highlight"
-version = "1.4.3+0.102.0"
+version = "1.4.4+0.103.0"
 dependencies = [
  "ansi_colours",
  "bat",
@@ -1224,26 +1229,25 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "439ee305def115ba05938db6eb1644ff94165c5ab5e9420d1c1bcedbba909391"
 
 [[package]]
-name = "proc-macro-error"
-version = "1.0.4"
+name = "proc-macro-error-attr2"
+version = "2.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "da25490ff9892aab3fcf7c36f08cfb902dd3e71ca0f9f9517bea02a73a5ce38c"
+checksum = "96de42df36bb9bba5542fe9f1a054b8cc87e172759a1868aa05c1f3acc89dfc5"
 dependencies = [
- "proc-macro-error-attr",
  "proc-macro2",
  "quote",
- "version_check",
 ]
 
 [[package]]
-name = "proc-macro-error-attr"
-version = "1.0.4"
+name = "proc-macro-error2"
+version = "2.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a1be40180e52ecc98ad80b184934baf3d0d29f979574e439af5a55274b35f869"
+checksum = "11ec05c52be0a07b08061f7dd003e7d7092e0472bc731b4af7bb1ef876109802"
 dependencies = [
+ "proc-macro-error-attr2",
  "proc-macro2",
  "quote",
- "version_check",
+ "syn",
 ]
 
 [[package]]
@@ -1595,6 +1599,25 @@ dependencies = [
 ]
 
 [[package]]
+name = "strum"
+version = "0.26.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8fec0f0aef304996cf250b31b5a10dee7980c85da9d759361292b8bca5a18f06"
+
+[[package]]
+name = "strum_macros"
+version = "0.26.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4c6bee85a5a24955dc440386795aa378cd9cf82acd5f764469152d2270e581be"
+dependencies = [
+ "heck",
+ "proc-macro2",
+ "quote",
+ "rustversion",
+ "syn",
+]
+
+[[package]]
 name = "supports-color"
 version = "3.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1827,12 +1850,6 @@ name = "unsafe-libyaml"
 version = "0.2.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "673aac59facbab8a9007c7f6108d11f63b603f7cabff99fabf650fea5c32b861"
-
-[[package]]
-name = "version_check"
-version = "0.9.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0b928f33d975fc6ad9f86c8f283853ad26bdd5b10b7f1542aa2fa15e2289105a"
 
 [[package]]
 name = "vte"
