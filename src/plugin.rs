@@ -93,7 +93,7 @@ impl PluginCommand for Highlight {
                 Err(LoadingError::Io(err)) => {
                     return Err(LabeledError::from(ShellError::from(
                         IoError::new_with_additional_context(
-                            err.kind(),
+                            err,
                             custom_themes_path.span,
                             custom_themes_path.item,
                             "Error while loading custom themes"
