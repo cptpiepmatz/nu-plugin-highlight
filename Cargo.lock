@@ -1075,7 +1075,7 @@ dependencies = [
 
 [[package]]
 name = "nu_plugin_highlight"
-version = "1.4.6+0.105.1"
+version = "1.4.7+0.105.1"
 dependencies = [
  "ansi_colours",
  "bat",
