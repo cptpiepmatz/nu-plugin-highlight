@@ -205,6 +205,7 @@ fn language_hint(
         match sub_type.as_str() {
             "tab-separated-values" => Some("tsv".to_string()),
             "x-toml" => Some("toml".to_string()),
+            "x-nuscript" | "x-nushell" | "x-nuon" => Some("nushell".to_string()),
             s if s.starts_with("x-") => None, // we cannot be sure about this type,
             _ => Some(sub_type)
         }
