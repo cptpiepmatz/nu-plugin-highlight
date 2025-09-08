@@ -129,8 +129,7 @@ impl Highlighter {
         let theme = self
             .custom_themes
             .as_ref()
-            .map(|themes| themes.themes.get(theme_id))
-            .flatten();
+            .and_then(|themes| themes.themes.get(theme_id));
         let theme = theme.unwrap_or_else(|| self.highlighting_assets.get_theme(theme_id));
 
         let mut highlighter = HighlightLines::new(syntax_ref, theme);
@@ -145,7 +144,7 @@ impl Highlighter {
                     true => l.trim_end().to_owned()
                 };
 
-                let styled_lines = highlighter.highlight_line(&l, &syntax_set).unwrap();
+                let styled_lines = highlighter.highlight_line(&l, syntax_set).unwrap();
                 styled_lines
                     .iter()
                     .map(|(style, s)| {

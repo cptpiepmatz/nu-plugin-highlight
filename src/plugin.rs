@@ -150,7 +150,7 @@ impl PluginCommand for Highlight {
         vec!["syntax", "highlight", "highlighting"]
     }
 
-    fn examples(&self) -> Vec<Example> {
+    fn examples(&self) -> Vec<Example<'_>> {
         const fn example<'e>(description: &'e str, example: &'e str) -> Example<'e>
         where
             'e: 'static
