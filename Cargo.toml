@@ -1,6 +1,6 @@
 [package]
 name = "nu_plugin_highlight"
-version = "1.4.9+0.107.0"
+version = "1.4.10+0.108.0"
 authors = ["Tim 'Piepmatz' Hesse"]
 edition = "2021"
 repository = "https://github.com/cptpiepmatz/nu-plugin-highlight"
@@ -16,9 +16,9 @@ bat = { version = "0.24", default-features = false }
 
 [dependencies]
 # nu
-nu-plugin = "0.107.0"
-nu-protocol = "0.107.0"
-nu-path = "0.107.0"
+nu-plugin = "0.108.0"
+nu-protocol = { version = "0.108.0", features = ["sqlite"] } # remove feature in next release
+nu-path = "0.108.0"
 
 # highlighting
 syntect = { workspace = true }
