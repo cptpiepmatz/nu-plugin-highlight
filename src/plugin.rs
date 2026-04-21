@@ -80,7 +80,7 @@ impl PluginCommand for Highlight {
         _plugin: &Self::Plugin,
         engine: &EngineInterface,
         call: &EvaluatedCall,
-        input: PipelineData
+        mut input: PipelineData
     ) -> Result<PipelineData, LabeledError> {
         let mut highlighter = Highlighter::new();
 
@@ -136,7 +136,7 @@ impl PluginCommand for Highlight {
             return Ok(PipelineData::Value(themes, None));
         }
 
-        let metadata = input.metadata();
+        let metadata = input.take_metadata();
         let input = input.into_value(call.head)?;
         let Spanned { item: input, span } = Spanned::<String>::from_value(input)?;
 
