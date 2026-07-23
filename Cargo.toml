@@ -2,7 +2,7 @@
 name = "nu_plugin_highlight"
 version = "1.4.16+0.114.1"
 authors = ["Tim 'Piepmatz' Hesse"]
-edition = "2021"
+edition = "2024"
 repository = "https://github.com/cptpiepmatz/nu-plugin-highlight"
 description = "A nushell plugin for syntax highlighting"
 license = "MIT"
