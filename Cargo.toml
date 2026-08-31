@@ -1,6 +1,6 @@
 [package]
 name = "nu_plugin_highlight"
-version = "1.4.16+0.114.1"
+version = "1.4.17+0.115.1"
 authors = ["Tim 'Piepmatz' Hesse"]
 edition = "2024"
 repository = "https://github.com/cptpiepmatz/nu-plugin-highlight"
@@ -16,9 +16,9 @@ bat = { version = "0.24", default-features = false }
 
 [dependencies]
 # nu
-nu-plugin = "0.114.1"
-nu-protocol = "0.114.1"
-nu-path = "0.114.1"
+nu-plugin = "0.115.1"
+nu-protocol = "0.115.1"
+nu-path = "0.115.1"
 
 # highlighting
 syntect = { workspace = true }
